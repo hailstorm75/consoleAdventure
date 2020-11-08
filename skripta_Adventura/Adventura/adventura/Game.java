@@ -1,5 +1,7 @@
 import command.Command;
 import command.CommandsRepository;
+import elements.ItemContainer;
+import elements.Key;
 import elements.Room;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,10 +46,15 @@ public final class Game {
     var kitchen = new Room("kitchen", "a very dirty kitchen, rusty pots scattered everywhere");
     var corridor = new Room("corridor", "long corridor leading into the unknown");
     var office = new Room("office", "an old office with a chair, worktable covered in paper, couple of cupboards");
-    var treasury = new Room("treasury", "gold everywhere");
+    var treasury = new Room("treasury", "gold everywhere", 42, "locked behind a thick steel door");
     
+    var workTable = new ItemContainer("worktable", "a dusty worktable covered in paper");
+    var noteWithCode = new Key("note", 42);
+  
     hall.connect(study, corridor, kitchen);
     office.connect(corridor, treasury);
+    workTable.add(noteWithCode);
+    office.add(workTable);
     
     currentRoom = hall;
     winRoom = treasury;
@@ -102,8 +109,9 @@ public final class Game {
     return switch (extracted.getType()) {
       case Help -> manual(extracted);
       case Goto -> go(extracted);
-      case Where -> where(extracted);
-      case End -> end(extracted);
+      case Unlock -> unlock(extracted);
+      case Where -> where();
+      case End -> end();
     };
   }
   
@@ -111,7 +119,7 @@ public final class Game {
     return currentRoom.getDescription();
   }
   
-  private String end(@NotNull final Command command) {
+  private String end() {
     gameOver = true;
     return "game stopped";
   }
@@ -128,7 +136,34 @@ public final class Game {
         : validCommands.getCommandManual(command.getParameter());
   }
   
-  private String where(Command extracted) {
+  private String unlock(@NotNull final Command command) {
+    if (!command.hasParameter())
+      return "unlock what?";
+    
+    var name = command.getParameter();
+    var room = currentRoom.getRoom(name);
+    if (room.isEmpty())
+    {
+      var item = currentRoom
+          .getItems()
+          .stream()
+          .filter(x -> x instanceof ItemContainer && x.getName().equalsIgnoreCase(name))
+          .findFirst();
+      
+      if (item.isEmpty())
+        return "Don't know what that is";
+    }
+
+    if (!room.get().isLocked())
+      return name + " is not locked";
+    else
+    {
+      room.get().unlock(new Key("", 42));
+      return name + " is now open";
+    }
+  }
+  
+  private String where() {
     return currentRoom.getDescription();
   }
   
@@ -150,8 +185,12 @@ public final class Game {
         case 3 -> "Can't go there.";
         default -> "Where's that?";
       };
+
+    var extracted = nextRoom.get();
+    if (extracted.isLocked())
+      return extracted.getLockedMessage().get();
     
-    currentRoom = nextRoom.get();
+    currentRoom = extracted;
     return currentRoom.getDescription();
   }
 }

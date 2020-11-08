@@ -20,7 +20,8 @@ public final class CommandsRepository {
     put(Pattern.compile("(?<COMMAND>(((go|head|move)((\\s+)to|))|enter)((\\s+)the|))((\\s+)(?<INPUT>.+))?", Pattern.CASE_INSENSITIVE), CommandType.Goto);
     put(Pattern.compile("(?<COMMAND>(where(|(\\s+)am I)|look around|location))", Pattern.CASE_INSENSITIVE), CommandType.Where);
     put(Pattern.compile("(?<COMMAND>(help|what((\\s+)is|)|describe|explain))((\\s+)(?<INPUT>.+))?", Pattern.CASE_INSENSITIVE), CommandType.Help);
-    put(Pattern.compile("(quit|stop|end|exit)(( the|) game|)", Pattern.CASE_INSENSITIVE), CommandType.End);
+    put(Pattern.compile("(?<COMMAND>(unlock|open))((\\s+)(?<INPUT>.+))?", Pattern.CASE_INSENSITIVE), CommandType.Unlock);
+    put(Pattern.compile("(quit|stop|end|exit)(((\\s+)the|)(\\s+)game|)", Pattern.CASE_INSENSITIVE), CommandType.End);
   }};
   
   /**
@@ -32,6 +33,7 @@ public final class CommandsRepository {
     commandsManual.put(CommandType.End, "Ends the game");
     commandsManual.put(CommandType.Where, "Examines the current player location");
     commandsManual.put(CommandType.Goto, "The player will enter the specified room. Example: go to the kitchen");
+    commandsManual.put(CommandType.Unlock, "Unlocks a given room or container");
   }
   
   private static Optional<String> findInputGroup(@NotNull final Matcher matcher) {

@@ -1,12 +1,10 @@
 package elements;
 
-import console.Color;
 import console.ConsoleEngine;
 import console.TextStyle;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Class representing a room/level
@@ -14,11 +12,10 @@ import java.util.stream.Collectors;
  * @author Michael Kolling, Lubos Pavlicek, Jarmila Pavlickova, Denis Akopyan
  * @version 3.0
  */
-public class Room {
-  private final String name;
-  private final String description;
+public class Room extends ItemContainer {
   private final Set<Room> rooms;
-  private final Set<Item> items;
+  private int lockId;
+  private final String lockedMessage;
   
   /**
    * Default constructor
@@ -27,10 +24,34 @@ public class Room {
    * @param description room description
    */
   public Room(@NotNull String name, @NotNull String description) {
-    this.name = name;
-    this.description = description;
-    rooms = new HashSet<>();
-    items = new HashSet<>();
+    this(name, description, -1, "");
+  }
+  
+  public Room(@NotNull String name, @NotNull String description, int lockId, @NotNull String lockedMessage) {
+    super(name, description);
+    this.rooms = new HashSet<>();
+    this.lockId = lockId;
+    this.lockedMessage = lockedMessage;
+  }
+  
+  public final boolean isLocked() {
+    return lockId != -1;
+  }
+  
+  public final Optional<String> getLockedMessage() {
+    return isLocked()
+      ? Optional.of(lockedMessage)
+      : Optional.empty();
+  }
+  
+  public final boolean unlock(Key key) {
+    if (!isLocked())
+      return false;
+    if (lockId != key.getId())
+      return false;
+    
+    lockId = -1;
+    return true;
   }
   
   /**
@@ -50,27 +71,19 @@ public class Room {
   public boolean equals(@NotNull final Object input) {
     if (input instanceof Room) {
       var room = (Room) input;
-      return name.equals(room.name);
+      return getName().equals(room.getName());
     }
 
     return false;
   }
   
   @Override
-  public int hashCode() {
-    return name.hashCode();
-  }
-  
-  public final String getName() {
-    return name;
-  }
-  
   public String getDescription() {
     return "You are in "
     + ConsoleEngine
         .getInstance()
         .formatForegroundStyleCode(TextStyle.Underline)
-    + description
+    + super.getDescription()
     + ConsoleEngine
         .getInstance()
         .formatForegroundStyleCode(TextStyle.Normal)
@@ -90,58 +103,6 @@ public class Room {
           .append(' ')
           .append(room.getName());
     return builder.toString();
-  }
-  
-  /**
-   * Adds a new item to the room
-   *
-   * @param item item to add
-   */
-  public final void addThing(@NotNull final Item item) {
-    items.add(item);
-  }
-  
-  /**
-   * Retrieves a list of items present in the room
-   *
-   * @return string representation of the items present in given room
-   */
-  private String thingsSet() {
-    return items.stream().map(Item::getName).collect(Collectors.joining("  "));
-  }
-  
-  /**
-   * Removes a thing identified by the given name from the room and returns the removed thing
-   *
-   * @param name name of the thing to remove
-   * @return the removed thing
-   */
-  public Optional<Item> removeThing(@NotNull String name) {
-    var thing = items
-        .stream()
-        .filter(x -> x.getName().equals(name))
-        .findFirst();
-  
-    if (thing.isEmpty())
-      return Optional.empty();
-
-    var extracted = thing.get();
-    if (extracted.getCanCarry())
-      items.remove(extracted);
-  
-    return Optional.of(extracted);
-  }
-  
-  /**
-   * Validates whether the given thing is present
-   *
-   * @param name identifier of the thing
-   * @return true if the thing is present
-   */
-  public final boolean hasThing(@NotNull String name) {
-    return items
-        .stream()
-        .anyMatch(x -> x.getName().equals(name));
   }
   
   public Optional<Room> getRoom(@NotNull String name) {

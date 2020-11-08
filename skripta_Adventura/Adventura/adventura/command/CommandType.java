@@ -13,6 +13,10 @@ public enum CommandType {
    */
   Help("Help"),
   /**
+   * Unlocks a given item container
+   */
+  Unlock("Unlock"),
+  /**
    * Advances the player to the room provided via a parameter
    */
   Goto("Go to"),
