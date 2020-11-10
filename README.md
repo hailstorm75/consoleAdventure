@@ -15,3 +15,5 @@ He cried for help for his parents, no-one answered. It was dead quiet. There was
 Finally, inside the study room, a cold sweat struck the boy, as he’d discovered that the place was brightly lit; by a door leading into a neon-blue tunnel. He recalled his parents arguing about renovating, but not to this extent?!
 
 The young lad gathered all his courage, carefully entered the tunnel, and paced into the unknown. To no spectators surprise, the entrance passage behind him closed, leaving the brave boy only one choice of direction.
+
+But what awaits ahead? – Some may wonder. Most horrible monsters, demons that haunt the boy from his school. They come from the dark realm of pre-school math to torment children all-over the world. 
