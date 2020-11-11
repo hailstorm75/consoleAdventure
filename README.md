@@ -18,4 +18,120 @@ The young lad gathered all his courage, carefully entered the tunnel, and paced 
 
 But what awaits ahead? – Some may wonder. Most horrible monsters, demons that haunt the boy from his school. They come from the dark realm of pre-school math to torment children all-over the world. 
 
+## Map
+
 ![alt text](https://github.com/hailstorm75/consoleAdventure/blob/main/skripta_Adventura/Room%20diagram.png "Room Diagram")
+
+## Script
+
+The following is a set of commands and outputs that lead to a successful game ending.
+
+### Introduction
+
+TODO
+
+### Step 1
+
+> go to the corridor
+
+HP: <3<3<3 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Inventory: 0
+
+**You are in the corridor that joins multiple rooms of the house together.**
+
+**You notice a paper-note lying on the floor.**
+
+**From here you can go to: bedroom, kitchen, study, living room**
+
+### Step 2
+
+> examine the note
+
+HP: <3<3<3 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Inventory: 0
+
+**You pick up the paper-note and read what it says:**
+
+**"ERTkdfgkhUI\*#5fsGO TO?<85Tudy =r00m///8"**
+
+**You put paper-note back to where you've found it**
+
+**From here you can go to: bedroom, kitchen, study, living room**
+
+### Step 3
+
+> head to kitchen
+
+HP: <3<3<3 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Inventory: 0
+
+**It seems that the kitchen is locked by three mysterious padlocks, each of a different color - blue, green, yellow**
+
+**From here you can go to: bedroom, kitchen, study, living room**
+
+### Step 4
+
+> enter study
+
+HP: <3<3<3 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Inventory: 0
+
+**It seems that the study is locked**
+
+**From here you can go to: bedroom, kitchen, study, living room**
+
+### Step 5
+
+> go to the living room
+
+HP: <3<3<3 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Inventory: 0
+
+**XXXX**
+
+**From here you can go to: corridor**
+
+### Step 6
+
+> take the key
+
+HP: <3<3<3 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Inventory: 1
+
+**XXXX**
+
+**From here you can go to: corridor**
+
+### Step 7
+
+> go to corridor
+
+HP: <3<3<3 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Inventory: 1
+
+**XXXX**
+
+**From here you can go to: bedroom, kitchen, study, living room**
+
+### Step 8
+
+> unlock study
+
+HP: <3<3<3 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Inventory: 0
+
+**You've unlocked the study room**
+
+**From here you can go to: bedroom, kitchen, study, living room**
+
+### Step 9
+
+> enter study
+
+HP: <3<3<3 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Inventory: 0
+
+**xxx**
+
+**From here you can go to: blue room, blue room, blue room, corridor**
+
+### Step 10
+
+> enter blue room
+
+HP: <3<3<3 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Inventory: 0
+
+**xxx**
+
+**From here you can go to: square room, mystery room**
