@@ -10,6 +10,7 @@ import java.util.Objects;
  * @version 1.0
  */
 public class Item {
+  private final String description;
   private final String name;
   private final boolean canCarry;
   
@@ -38,8 +39,22 @@ public class Item {
    * @param canCarry determines whether the item can be carried
    */
   public Item(@NotNull String name, boolean canCarry) {
+    this(name, canCarry, "A " + name);
+  }
+  
+  public Item(@NotNull String name, boolean canCarry, @NotNull String description) {
     this.name = name;
     this.canCarry = canCarry;
+    this.description = description;
+  }
+  
+  /**
+   * Getter for the description property
+   *
+   * @return description of the items container
+   */
+  public String getDescription() {
+    return description;
   }
   
   @Override

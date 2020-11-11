@@ -14,8 +14,6 @@ import java.util.*;
  */
 public class Room extends ItemContainer {
   private final Set<Room> rooms;
-  private int lockId;
-  private final String lockedMessage;
   
   /**
    * Default constructor
@@ -28,30 +26,8 @@ public class Room extends ItemContainer {
   }
   
   public Room(@NotNull String name, @NotNull String description, int lockId, @NotNull String lockedMessage) {
-    super(name, description);
+    super(name, description, lockId, lockedMessage);
     this.rooms = new HashSet<>();
-    this.lockId = lockId;
-    this.lockedMessage = lockedMessage;
-  }
-  
-  public final boolean isLocked() {
-    return lockId != -1;
-  }
-  
-  public final Optional<String> getLockedMessage() {
-    return isLocked()
-      ? Optional.of(lockedMessage)
-      : Optional.empty();
-  }
-  
-  public final boolean unlock(Key key) {
-    if (!isLocked())
-      return false;
-    if (lockId != key.getId())
-      return false;
-    
-    lockId = -1;
-    return true;
   }
   
   /**

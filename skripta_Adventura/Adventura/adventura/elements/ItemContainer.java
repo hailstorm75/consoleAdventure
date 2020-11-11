@@ -6,17 +6,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class ItemContainer extends Item {
-  private final String description;
   private Set<Item> items = new HashSet<>();
-  
-  /**
-   * Getter for the description property
-   *
-   * @return description of the items container
-   */
-  public String getDescription() {
-    return description;
-  }
+  private int lockId;
+  private final String lockedMessage;
   
   /**
    * Default constructor
@@ -24,9 +16,14 @@ public class ItemContainer extends Item {
    * @param name     name of the item container
    * @param description description of the item container
    */
+  public ItemContainer(@NotNull String name, @NotNull String description, int lockId, @NotNull String lockedMessage) {
+    super(name, false, description);
+    this.lockId = lockId;
+    this.lockedMessage = lockedMessage;
+  }
+  
   public ItemContainer(@NotNull String name, @NotNull String description) {
-    super(name, false);
-    this.description = description;
+    this(name, description, -1, "");
   }
   
   public ItemContainer add(Item... items) {
@@ -46,6 +43,26 @@ public class ItemContainer extends Item {
   
   public Collection<Item> getItems() {
     return items.stream().collect(Collectors.toUnmodifiableList());
+  }
+ 
+  public final boolean isLocked() {
+    return lockId != -1;
+  }
+  
+  public final Optional<String> getLockedMessage() {
+    return isLocked()
+        ? Optional.of(lockedMessage)
+        : Optional.empty();
+  }
+  
+  public final boolean unlock(Key key) {
+    if (!isLocked())
+      return false;
+    if (lockId != key.getId())
+      return false;
+    
+    lockId = -1;
+    return true;
   }
   
   /**

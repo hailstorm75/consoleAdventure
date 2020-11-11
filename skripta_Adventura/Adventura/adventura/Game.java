@@ -6,6 +6,7 @@ import elements.Room;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Class containing the game logic
@@ -19,6 +20,7 @@ public final class Game {
   private Room currentRoom;
   private Room winRoom;
   private int lives = 3;
+  private ItemContainer backpack = new ItemContainer("my backpack", "A backpack, very handy when it comes to carrying items");
   
   /**
    * Getter for the lives property
@@ -48,13 +50,13 @@ public final class Game {
     var office = new Room("office", "an old office with a chair, worktable covered in paper, couple of cupboards");
     var treasury = new Room("treasury", "gold everywhere", 42, "locked behind a thick steel door");
     
-    var workTable = new ItemContainer("worktable", "a dusty worktable covered in paper");
+    var workTable = new ItemContainer("worktable", "A dusty worktable covered in paper");
     var noteWithCode = new Key("note", 42);
   
     hall.connect(study, corridor, kitchen);
     office.connect(corridor, treasury);
     workTable.add(noteWithCode);
-    office.add(workTable);
+    hall.add(workTable);
     
     currentRoom = hall;
     winRoom = treasury;
@@ -108,9 +110,11 @@ public final class Game {
     
     return switch (extracted.getType()) {
       case Help -> manual(extracted);
+      case Carry -> carry(extracted);
       case Goto -> go(extracted);
       case Unlock -> unlock(extracted);
       case Where -> where();
+      case Examine -> examine(extracted);
       case End -> end();
     };
   }
@@ -122,6 +126,20 @@ public final class Game {
   private String end() {
     gameOver = true;
     return "game stopped";
+  }
+  
+  private String carry(Command command) {
+    if (!command.hasParameter())
+      return "Carry what?";
+    
+    var item = currentRoom.takeOut(command.getParameter());
+    
+    if (item.isEmpty())
+      return "I don't know what that is";
+    
+    backpack.add(item.get());
+    
+    return "Put the " + item.get().getName() + " in the backpack";
   }
   
   private String manual(@NotNull final Command command) {
@@ -136,9 +154,24 @@ public final class Game {
         : validCommands.getCommandManual(command.getParameter());
   }
   
+  private String examine(@NotNull final Command command) {
+    if (!command.hasParameter())
+      return "But what?";
+    
+    var item = currentRoom
+        .getItems()
+        .stream()
+        .filter(x -> x.getName().equalsIgnoreCase(command.getParameter()))
+        .findFirst();
+    
+    if (item.isEmpty())
+      return "That's not here";
+    return item.get().getDescription();
+  }
+  
   private String unlock(@NotNull final Command command) {
     if (!command.hasParameter())
-      return "unlock what?";
+      return "Unlock what?";
     
     var name = command.getParameter();
     var room = currentRoom.getRoom(name);
@@ -148,19 +181,23 @@ public final class Game {
           .getItems()
           .stream()
           .filter(x -> x instanceof ItemContainer && x.getName().equalsIgnoreCase(name))
+          .map(x -> (ItemContainer)x)
           .findFirst();
       
       if (item.isEmpty())
         return "Don't know what that is";
     }
 
-    if (!room.get().isLocked())
+    var roomElement = room.get();
+    
+    if (!roomElement.isLocked())
       return name + " is not locked";
     else
-    {
-      room.get().unlock(new Key("", 42));
-      return name + " is now open";
-    }
+      for (var key : backpack.getItems().stream().filter(x -> x instanceof Key).map(x -> (Key)x).collect(Collectors.toUnmodifiableList()))
+        if (roomElement.unlock(key))
+          return name + " is now open";
+    
+    return "Don't know what that is";
   }
   
   private String where() {

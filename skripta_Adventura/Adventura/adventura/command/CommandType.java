@@ -13,6 +13,10 @@ public enum CommandType {
    */
   Help("Help"),
   /**
+   * Carries a given item
+   */
+  Carry("Carrry"),
+  /**
    * Unlocks a given item container
    */
   Unlock("Unlock"),
@@ -24,6 +28,10 @@ public enum CommandType {
    * Described where the player is
    */
   Where("Where"),
+  /**
+   * Examines a given item
+   */
+  Examine("Examine"),
   /**
    * Ends the game
    */
