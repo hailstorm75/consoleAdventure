@@ -17,3 +17,5 @@ Finally, inside the study room, a cold sweat struck the boy, as he’d discovere
 The young lad gathered all his courage, carefully entered the tunnel, and paced into the unknown. To no spectators surprise, the entrance passage behind him closed, leaving the brave boy only one choice of direction.
 
 But what awaits ahead? – Some may wonder. Most horrible monsters, demons that haunt the boy from his school. They come from the dark realm of pre-school math to torment children all-over the world. 
+
+![alt text](https://github.com/hailstorm75/consoleAdventure/blob/main/skripta_Adventura/Room%20diagram.png "Room Diagram")
