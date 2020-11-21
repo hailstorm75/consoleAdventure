@@ -20,7 +20,7 @@ But what awaits ahead? – Some may wonder. Most horrible monsters, demons that 
 
 ## Map
 
-![alt text](https://github.com/hailstorm75/consoleAdventure/blob/main/skripta_Adventura/Room%20diagram.png "Room Diagram")
+![alt text](https://github.com/hailstorm75/consoleAdventure/blob/main/skripta_Adventura/Untitled%20Diagram.png "Room Diagram")
 
 ## Script
 
