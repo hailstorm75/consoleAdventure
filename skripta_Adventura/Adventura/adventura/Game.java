@@ -20,7 +20,7 @@ public final class Game {
   private Room currentRoom;
   private Room winRoom;
   private int lives = 3;
-  private ItemContainer backpack = new ItemContainer("my backpack", "A backpack, very handy when it comes to carrying items");
+  private final ItemContainer backpack = new ItemContainer("my backpack", "(my(\\s+))|(backpack)", "A backpack, very handy when it comes to carrying items");
   
   /**
    * Getter for the lives property
@@ -43,23 +43,53 @@ public final class Game {
    * Initializes the individual rooms and weaves them together into a singular map
    */
   private void initializeRooms() {
-    var hall = new Room("hall", "entrance hallway of the mansion");
-    var study = new Room("study", "study room full of dusty books, cobwebs and probably spiders");
-    var kitchen = new Room("kitchen", "a very dirty kitchen, rusty pots scattered everywhere");
-    var corridor = new Room("corridor", "long corridor leading into the unknown");
-    var office = new Room("office", "an old office with a chair, worktable covered in paper, couple of cupboards");
-    var treasury = new Room("treasury", "gold everywhere", 42, "locked behind a thick steel door");
+    // --- Initialize rooms -------------------------------------------------------------------------------
     
-    var workTable = new ItemContainer("worktable", "A dusty worktable covered in paper");
-    var noteWithCode = new Key("note", 42);
+    var bedroom = new Room("Bedroom", "", "");
+    var kitchen = new Room("Kitchen", "", "");
+    var corridor = new Room("Corridor", "the corridor that joins multiple rooms of the house together.", "You notice a paper-note lying on the floor.");
+    var livingRoom = new Room("Living room", "(living)((\\s+room)|)", "The living room is silent with nobody around.", "You notice a key on the coffee table.");
+    var studyRoom = new Room("Study room", "(study)((\\s+room)|)", "the study.", "Books are scattered all over the place and where once stood a mighty bookshelf now is a wall with three silhouettes of doors.\n" +
+        "\n" +
+        "Each of a different color - blue, green, yellow.\n" +
+        "\n" +
+        "Only the blue one had a handle drawn, while the others were missing it.");
+    
+    var blueRoom = new Room("Blue room", "(blue)((\\s+room)|)", "", "");
+    var squaresRoom = new Room("Squares", "(square(s|))((\\s+room)|)", "", "");
+    var bossRoom1 = new Room("Mystery room", "(mystery)((\\s+room)|)", "", "");
+    
+    var greenRoom = new Room("Green room", "(green)((\\s+room)|)", "", "");
+    var circlesRoom = new Room("Circles", "(circle(s|))((\\s+room)|)", "", "");
+    var trianglesRoom = new Room("Triangles", "(triangle(s|))((\\s+room)|)", "", "");
+    var numbersRoom = new Room("Numbers", "(number(s|))((\\s+room)|)", "", "");
+    var bossRoom2 = new Room("Mystery room", "(mystery)((\\s+room)|)", "", "");
+    
+    var yellowRoom = new Room("Yellow room", "(yellow)((\\s+room)|)", "", "");
+    var prison = new Room("Prison", "prison((\\s+room)|)", "", "");
+    var bossRoom3 = new Room("Mystery room", "(mystery)((\\s+room)|)", "", "");
+    
+    // ----------------------------------------------------------------------------------------------------
+    
+    corridor.connect(bedroom, kitchen, livingRoom, studyRoom);
+    studyRoom.connect(blueRoom, greenRoom, yellowRoom);
+    blueRoom.connect(bossRoom1, squaresRoom);
+    greenRoom.connect(circlesRoom, trianglesRoom, numbersRoom);
+    circlesRoom.connect(bossRoom2);
+    prison.connect(yellowRoom, bossRoom3);
+    
+    // --- Set end and start rooms ------------------------------------------------------------------------
+    
+    currentRoom = bedroom;
+    winRoom = kitchen;
+  }
   
-    hall.connect(study, corridor, kitchen);
-    office.connect(corridor, treasury);
-    workTable.add(noteWithCode);
-    hall.add(workTable);
-    
-    currentRoom = hall;
-    winRoom = treasury;
+  public void addLives() {
+    ++lives;
+  }
+  
+  public boolean removeLives() {
+    return --lives != 0;
   }
   
   /**
@@ -129,7 +159,7 @@ public final class Game {
   }
   
   private String carry(Command command) {
-    if (!command.hasParameter())
+    if (command.hasNoParameter())
       return "Carry what?";
     
     var item = currentRoom.takeOut(command.getParameter());
@@ -139,11 +169,11 @@ public final class Game {
     
     backpack.add(item.get());
     
-    return "Put the " + item.get().getName() + " in the backpack";
+    return "Put the " + item.get().getDisplayName() + " in the backpack";
   }
   
   private String manual(@NotNull final Command command) {
-    return !command.hasParameter()
+    return command.hasNoParameter()
         ? "Ztratil ses. Jsi sam(a). Toulas se\n"
         + "po arealu skoly na Jiznim meste.\n"
         + "\n"
@@ -155,13 +185,13 @@ public final class Game {
   }
   
   private String examine(@NotNull final Command command) {
-    if (!command.hasParameter())
+    if (command.hasNoParameter())
       return "But what?";
     
     var item = currentRoom
         .getItems()
         .stream()
-        .filter(x -> x.getName().equalsIgnoreCase(command.getParameter()))
+        .filter(x -> x.getDisplayName().equalsIgnoreCase(command.getParameter()))
         .findFirst();
     
     if (item.isEmpty())
@@ -170,32 +200,33 @@ public final class Game {
   }
   
   private String unlock(@NotNull final Command command) {
-    if (!command.hasParameter())
+    if (command.hasNoParameter())
       return "Unlock what?";
     
     var name = command.getParameter();
     var room = currentRoom.getRoom(name);
-    if (room.isEmpty())
-    {
+    if (room.isEmpty()) {
       var item = currentRoom
           .getItems()
           .stream()
-          .filter(x -> x instanceof ItemContainer && x.getName().equalsIgnoreCase(name))
-          .map(x -> (ItemContainer)x)
+          .filter(x -> x instanceof ItemContainer && x.getDisplayName().equalsIgnoreCase(name))
+          .map(x -> (ItemContainer) x)
           .findFirst();
       
       if (item.isEmpty())
         return "Don't know what that is";
     }
-
-    var roomElement = room.get();
-    
-    if (!roomElement.isLocked())
-      return name + " is not locked";
     else
-      for (var key : backpack.getItems().stream().filter(x -> x instanceof Key).map(x -> (Key)x).collect(Collectors.toUnmodifiableList()))
-        if (roomElement.unlock(key))
-          return name + " is now open";
+    {
+      var roomElement = room.get();
+  
+      if (!roomElement.isLocked())
+        return name + " is not locked";
+      else
+        for (var key : backpack.getItems().stream().filter(x -> x instanceof Key).map(x -> (Key) x).collect(Collectors.toUnmodifiableList()))
+          if (roomElement.unlock(key))
+            return name + " is now open";
+    }
     
     return "Don't know what that is";
   }
@@ -206,7 +237,7 @@ public final class Game {
   
   private String go(@NotNull final Command command) {
     // If the command is missing the parameter..
-    if (!command.hasParameter())
+    if (command.hasNoParameter())
       // ask the user to specify it
       return "Where to? Specify the room name";
     
@@ -222,9 +253,10 @@ public final class Game {
         case 3 -> "Can't go there.";
         default -> "Where's that?";
       };
-
+    
     var extracted = nextRoom.get();
     if (extracted.isLocked())
+      //noinspection OptionalGetWithoutIsPresent
       return extracted.getLockedMessage().get();
     
     currentRoom = extracted;

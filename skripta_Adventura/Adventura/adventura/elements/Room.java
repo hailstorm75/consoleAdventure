@@ -5,6 +5,7 @@ import console.TextStyle;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Class representing a room/level
@@ -14,20 +15,30 @@ import java.util.*;
  */
 public class Room extends ItemContainer {
   private final Set<Room> rooms;
+  private final String firstEntryDescription;
+  
+  public String getFirstEntryDescription() {
+    return firstEntryDescription;
+  }
   
   /**
    * Default constructor
    *
-   * @param name name of the given room
+   * @param displayName name of the given room
    * @param description room description
    */
-  public Room(@NotNull String name, @NotNull String description) {
-    this(name, description, -1, "");
+  public Room(@NotNull String displayName, @NotNull String matchName, @NotNull String description, @NotNull String firstEntryDescription) {
+    this(displayName, matchName, description, firstEntryDescription, -1, "");
   }
   
-  public Room(@NotNull String name, @NotNull String description, int lockId, @NotNull String lockedMessage) {
-    super(name, description, lockId, lockedMessage);
+  public Room(@NotNull String displayName, @NotNull String description, @NotNull String firstEntryDescription) {
+    this(displayName, displayName.toLowerCase(), description, firstEntryDescription, -1, "");
+  }
+  
+  public Room(@NotNull String displayName, @NotNull String matchName, @NotNull String description, @NotNull String firstEntryDescription, int lockId, @NotNull String lockedMessage) {
+    super(displayName, matchName, description, lockId, lockedMessage);
     this.rooms = new HashSet<>();
+    this.firstEntryDescription = firstEntryDescription;
   }
   
   /**
@@ -47,7 +58,7 @@ public class Room extends ItemContainer {
   public boolean equals(@NotNull final Object input) {
     if (input instanceof Room) {
       var room = (Room) input;
-      return getName().equals(room.getName());
+      return getDisplayName().equals(room.getDisplayName());
     }
 
     return false;
@@ -68,17 +79,9 @@ public class Room extends ItemContainer {
   }
   
   private String getRoomNames() {
-    if (rooms.size() == 0)
-      return "";
-    
-    var builder = new StringBuilder();
-    builder.append("Exits:");
-    
-    for (var room : rooms)
-      builder
-          .append(' ')
-          .append(room.getName());
-    return builder.toString();
+    return rooms.size() != 0
+      ? "Exits:" + rooms.stream().map(Room::getDisplayName).collect(Collectors.joining(", "))
+      : "";
   }
   
   public Optional<Room> getRoom(@NotNull String name) {
@@ -86,7 +89,7 @@ public class Room extends ItemContainer {
       return Optional.empty();
 
     for (var room : rooms)
-      if (room.getName().equals(name))
+      if (room.getDisplayName().equalsIgnoreCase(name))
         return Optional.of(room);
 
     return Optional.empty();

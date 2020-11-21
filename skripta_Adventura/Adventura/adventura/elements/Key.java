@@ -14,8 +14,8 @@ public class Key extends Item {
    *
    * @param name     name of the item
    */
-  public Key(@NotNull String name, int id) {
-    super(name, true);
+  public Key(@NotNull String name, int id, @NotNull String description) {
+    super(name, true, description);
     this.id = id;
   }
 }

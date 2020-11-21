@@ -72,8 +72,8 @@ public class Command {
    *
    * @return true if the command has a parameter
    */
-  public boolean hasParameter() {
-    return (parameter.length() != 0);
+  public boolean hasNoParameter() {
+    return (parameter.length() == 0);
   }
 }
 

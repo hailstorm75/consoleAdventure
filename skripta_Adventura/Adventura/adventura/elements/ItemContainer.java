@@ -6,24 +6,24 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class ItemContainer extends Item {
-  private Set<Item> items = new HashSet<>();
+  private final Set<Item> items = new HashSet<>();
   private int lockId;
   private final String lockedMessage;
   
   /**
    * Default constructor
    *
-   * @param name     name of the item container
+   * @param displayName     name of the item container
    * @param description description of the item container
    */
-  public ItemContainer(@NotNull String name, @NotNull String description, int lockId, @NotNull String lockedMessage) {
-    super(name, false, description);
+  public ItemContainer(@NotNull String displayName, @NotNull String matchName, @NotNull String description, int lockId, @NotNull String lockedMessage) {
+    super(displayName, matchName, false, description);
     this.lockId = lockId;
     this.lockedMessage = lockedMessage;
   }
   
-  public ItemContainer(@NotNull String name, @NotNull String description) {
-    this(name, description, -1, "");
+  public ItemContainer(@NotNull String displayName, @NotNull String matchName, @NotNull String description) {
+    this(displayName, matchName, description, -1, "");
   }
   
   public ItemContainer add(Item... items) {
@@ -38,7 +38,7 @@ public class ItemContainer extends Item {
    * @return string representation of the items present in given room
    */
   private String itemNames() {
-    return items.stream().map(Item::getName).collect(Collectors.joining("  "));
+    return items.stream().map(Item::getDisplayName).collect(Collectors.joining("  "));
   }
   
   public Collection<Item> getItems() {
@@ -46,7 +46,7 @@ public class ItemContainer extends Item {
   }
  
   public final boolean isLocked() {
-    return lockId != -1;
+    return lockId > 0;
   }
   
   public final Optional<String> getLockedMessage() {
@@ -74,7 +74,7 @@ public class ItemContainer extends Item {
   public final boolean hasItem(@NotNull String name) {
     return items
         .stream()
-        .anyMatch(x -> x.getName().equals(name));
+        .anyMatch(x -> x.getDisplayName().equals(name));
   }
   
   /**
@@ -86,7 +86,7 @@ public class ItemContainer extends Item {
   public Optional<Item> takeOut(@NotNull String name) {
     var item = items
         .stream()
-        .filter(x -> x.getName().equals(name))
+        .filter(x -> x.getDisplayName().equals(name))
         .findFirst();
   
     if (item.isEmpty())

@@ -15,7 +15,7 @@ public enum CommandType {
   /**
    * Carries a given item
    */
-  Carry("Carrry"),
+  Carry("Carry"),
   /**
    * Unlocks a given item container
    */
