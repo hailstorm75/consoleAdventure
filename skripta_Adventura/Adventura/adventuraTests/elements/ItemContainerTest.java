@@ -5,10 +5,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.ArrayList;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ItemContainerTest {
   
@@ -60,6 +60,18 @@ class ItemContainerTest {
   
   @Test
   void getItems() {
+    // Assemble
+    var item1 = new Item("item1", false, "description");
+    var item2 = new Item("item2", false, "description");
+    
+    var container = new ItemContainer("container", ".*", "description");
+    container.add(item1, item2);
+    
+    // Act
+    var result = container.getItems();
+    
+    // Assert
+    assertIterableEquals(new ArrayList<>() { { add(item1); add(item2); } }, result);
   }
   
   private static Stream<Arguments> parametersForIsLocked() {
@@ -101,8 +113,28 @@ class ItemContainerTest {
   void unlock() {
   }
   
-  @Test
-  void hasItem() {
+  private static Stream<Arguments> parametersForHasItem() {
+    return Stream.of(
+        Arguments.of(new String[] { "Item1", "Item2" }, "Item3", false),
+        Arguments.of(new String[] { "Item1", "Item2" }, "Item2", true),
+        Arguments.of(new String[] { "Item1", "Item2" }, "Item1", true),
+        Arguments.of(new String[0], "Item1", false)
+    );
+  }
+  
+  @ParameterizedTest(name = "{index} => items={0}, item={1}, expected={2}")
+  @MethodSource("parametersForHasItem")
+  void hasItem(String[] items, String item, boolean expected) {
+    // Assemble
+    var container = new ItemContainer("container", ".*", "description");
+    for (var name : items)
+      container.add(new Item(name, false, "description"));
+    
+    // Act
+    var result = container.hasItem(item);
+    
+    // Assert
+    assertEquals(expected, result);
   }
   
   @Test

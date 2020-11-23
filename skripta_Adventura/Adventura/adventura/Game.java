@@ -22,6 +22,10 @@ public final class Game {
   private int lives = 3;
   private final ItemContainer backpack = new ItemContainer("my backpack", "(my(\\s+))|(backpack)", "A backpack, very handy when it comes to carrying items");
   
+  public Room getCurrentRoom() {
+    return currentRoom;
+  }
+  
   /**
    * Getter for the lives property
    *
@@ -96,9 +100,9 @@ public final class Game {
    * Gets the introduction to the game
    */
   public String getIntroduction() {
-    return "Welcome!\n" +
-        "This is just another remarkably boring adventure game.\n" +
-        "Type 'help' for instructions.";
+    return "You wake up in your room, bright light from the sun is shing inside. Today is going to be a great day!\n" +
+        "Just need to grab a snack, pack the books and head to school.\n" +
+        "Hopefully, there won't be a math test today, those stick.\n";
   }
   
   /**
@@ -120,10 +124,11 @@ public final class Game {
   }
   
   public String process(@NotNull Optional<Command> command) {
+    var result = processCommand(command);
     if (currentRoom == winRoom)
       gameOver = true;
     
-    return processCommand(command);
+    return result;
   }
   
   private String processCommand(@NotNull final Optional<Command> command) {
@@ -153,6 +158,10 @@ public final class Game {
     return currentRoom.getDescription();
   }
   
+  public String getRoomExists() {
+    return currentRoom.getRoomNames();
+  }
+  
   private String end() {
     gameOver = true;
     return "game stopped";
@@ -174,10 +183,7 @@ public final class Game {
   
   private String manual(@NotNull final Command command) {
     return command.hasNoParameter()
-        ? "Ztratil ses. Jsi sam(a). Toulas se\n"
-        + "po arealu skoly na Jiznim meste.\n"
-        + "\n"
-        + "Type what you wish to do and press enter (more than one way to enter a command is supported)"
+        ? "Type what you wish to do and press enter (more than one way to enter a command is supported)"
         + "\n"
         + "The following command types are available:\n"
         + validCommands.getCommandsManual()

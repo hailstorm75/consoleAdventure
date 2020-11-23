@@ -16,6 +16,10 @@ public final class GameEngine {
   private final Game game;
   private final static GameEngine instance = new GameEngine();
   
+  public static Game getGameInstance() {
+    return getInstance().game;
+  }
+  
   /**
    * Getter of the singleton instance of the game engine
    *
@@ -53,17 +57,14 @@ public final class GameEngine {
    * Runs the game loop
    */
   public void run() {
+    drawHud();
+  
     ConsoleEngine
         .getInstance()
         .setStyle(Color.Yellow)
         .typeOutLn(game.getIntroduction())
-        .setDefaultStyle();
-  
-    drawHud();
-    
-    ConsoleEngine
-        .getInstance()
-        .typeOutLn(game.getRoomDescription());
+        .setDefaultStyle()
+        .println(game.getRoomExists());
   
     while (!game.isGameOver()) {
       var input = getInput();

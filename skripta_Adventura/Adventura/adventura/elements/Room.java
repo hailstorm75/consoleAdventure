@@ -78,9 +78,9 @@ public class Room extends ItemContainer {
     + getRoomNames();
   }
   
-  private String getRoomNames() {
+  public String getRoomNames() {
     return rooms.size() != 0
-      ? "Exits:" + rooms.stream().map(Room::getDisplayName).collect(Collectors.joining(", "))
+      ? "From here you can go to: " + rooms.stream().map(room -> room.getDisplayName().toLowerCase()).collect(Collectors.joining(", "))
       : "";
   }
   
