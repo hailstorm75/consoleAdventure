@@ -26,6 +26,10 @@ public final class Game {
     return currentRoom;
   }
   
+  public ItemContainer getBackpack() {
+    return backpack;
+  }
+  
   /**
    * Getter for the lives property
    *
