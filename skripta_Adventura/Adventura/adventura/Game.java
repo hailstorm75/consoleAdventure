@@ -1,10 +1,14 @@
 import command.Command;
 import command.CommandsRepository;
-import elements.ItemContainer;
-import elements.Key;
-import elements.Room;
+import elements.*;
+import elements.rooms.*;
+import elements.specialItems.Consumable;
+import elements.specialItems.Key;
+import elements.specialItems.Note;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -51,33 +55,63 @@ public final class Game {
    * Initializes the individual rooms and weaves them together into a singular map
    */
   private void initializeRooms() {
+    // ----------------------------------------------------------------------------------------------------
+  
+    var corridorNote = new Note("Note", "(|paper(\\s+|-))(note)", "\"ERTkdfgkhUI*#5fsGO TO?<85Tudy =r00m///8\"\n");
+    var studyRoomKey = new Key("key", 1, "a key");
+    var bossRoomBlueKey = new Key("key", "((myster(y|ious)\\s+)key)", 2, "mysterious key");
+    var chocolateSquares = new Consumable("chocolate", "choco(|late)", "a delicious bar of chocolate");
+    var smallBox = new ItemContainer("Small box", "small(\\s+box)", "a small floating box");
+    var mediumBox = new ItemContainer("Medium box", "medium(\\s+box)", "a medium floating box");
+    var largeBox = new ItemContainer("Large box", "large(\\s+box)", "a large floating box");
+    
+    var boxes = new ArrayList<ItemContainer>()
+    {
+      {
+        add(smallBox);
+        add(mediumBox);
+        add(largeBox);
+      }
+    };
+    Collections.shuffle(boxes);
+    boxes.get(0).add(chocolateSquares);
+    boxes.get(1).add(bossRoomBlueKey);
+    boxes.clear();
+  
     // --- Initialize rooms -------------------------------------------------------------------------------
     
-    var bedroom = new Room("Bedroom", "", "");
-    var kitchen = new Room("Kitchen", "", "");
-    var corridor = new Room("Corridor", "the corridor that joins multiple rooms of the house together.", "You notice a paper-note lying on the floor.");
+    var bedroom = new Room("Bedroom", "your bedroom", "");
+    var kitchen = new WinRoom("Kitchen", "", "");
+    var corridor = new Room("Corridor", "the corridor that joins multiple rooms of the house together", "You notice a paper-note lying on the floor.");
     var livingRoom = new Room("Living room", "(living)((\\s+room)|)", "The living room is silent with nobody around.", "You notice a key on the coffee table.");
-    var studyRoom = new Room("Study room", "(study)((\\s+room)|)", "the study.", "Books are scattered all over the place and where once stood a mighty bookshelf now is a wall with three silhouettes of doors.\n" +
-        "\n" +
-        "Each of a different color - blue, green, yellow.\n" +
-        "\n" +
-        "Only the blue one had a handle drawn, while the others were missing it.");
+    var studyRoom = new Room("Study room",
+    "(study)((\\s+room)|)",
+    "the study",
+    "Books are scattered all over the place and where once stood a mighty bookshelf now is a wall with three silhouettes of doors.\n\n" +
+        "Each of a different color - blue, green, yellow.\n\n" +
+        "Only the blue one had a handle drawn, while the others were missing it.",
+        1,
+        "It seems that the study is locked");
     
     var blueRoom = new Room("Blue room", "(blue)((\\s+room)|)", "", "");
     var squaresRoom = new Room("Squares", "(square(s|))((\\s+room)|)", "", "");
-    var bossRoom1 = new Room("Mystery room", "(mystery)((\\s+room)|)", "", "");
+    var bossRoom1 = new BattleRoom("Mystery room", "(mystery)((\\s+room)|)", "", "", 2, "The door to the mystery room is locked. Probably needs a key.");
     
     var greenRoom = new Room("Green room", "(green)((\\s+room)|)", "", "");
     var circlesRoom = new Room("Circles", "(circle(s|))((\\s+room)|)", "", "");
-    var trianglesRoom = new Room("Triangles", "(triangle(s|))((\\s+room)|)", "", "");
+    var trianglesRoom = new TrapRoom("Triangles", "(triangle(s|))((\\s+room)|)", "", "");
     var numbersRoom = new Room("Numbers", "(number(s|))((\\s+room)|)", "", "");
-    var bossRoom2 = new Room("Mystery room", "(mystery)((\\s+room)|)", "", "");
+    var bossRoom2 = new BattleRoom("Mystery room", "(mystery)((\\s+room)|)", "", "");
     
     var yellowRoom = new Room("Yellow room", "(yellow)((\\s+room)|)", "", "");
     var prison = new Room("Prison", "prison((\\s+room)|)", "", "");
-    var bossRoom3 = new Room("Mystery room", "(mystery)((\\s+room)|)", "", "");
+    var bossRoom3 = new BattleRoom("Mystery room", "(mystery)((\\s+room)|)", "", "");
     
     // ----------------------------------------------------------------------------------------------------
+    
+    corridor.add(corridorNote);
+    livingRoom.add(studyRoomKey);
+    squaresRoom.add(smallBox, mediumBox, largeBox);
     
     corridor.connect(bedroom, kitchen, livingRoom, studyRoom);
     studyRoom.connect(blueRoom, greenRoom, yellowRoom);

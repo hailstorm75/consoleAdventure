@@ -1,7 +1,8 @@
-package elements;
+package elements.rooms;
 
 import console.ConsoleEngine;
 import console.TextStyle;
+import elements.ItemContainer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
