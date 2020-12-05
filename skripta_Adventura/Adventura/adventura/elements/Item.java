@@ -48,9 +48,13 @@ public class Item {
   }
   
   public Item(@NotNull String displayName, @NotNull String matchName, boolean canCarry, @NotNull String description) {
+    // If the display name is empty..
     if (displayName.length() == 0)
+      // throw an exception
       throw new IllegalArgumentException("displayName cannot be empty");
+    // If the match expression is empty..
     if (matchName.length() == 0)
+      // throw an exception
       throw new IllegalArgumentException("matchName cannot be empty");
     
     this.displayName = displayName;
@@ -59,6 +63,12 @@ public class Item {
     this.matcher = Pattern.compile(matchName, Pattern.CASE_INSENSITIVE);
   }
   
+  /**
+   * Checks if the item matches the given name
+   *
+   * @param name name to check
+   * @return true if the name is a match
+   */
   public boolean isMatch(@NotNull String name) {
     return matcher.matcher(name).matches();
   }

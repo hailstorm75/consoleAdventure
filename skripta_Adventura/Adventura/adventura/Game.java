@@ -1,5 +1,7 @@
 import command.Command;
 import command.CommandsRepository;
+import console.ConsoleEngine;
+import console.TextStyle;
 import elements.*;
 import elements.rooms.*;
 import elements.specialItems.Consumable;
@@ -24,14 +26,26 @@ public final class Game {
   private Room currentRoom;
   private Room winRoom;
   private int lives = 3;
-  private final ItemContainer backpack = new ItemContainer("my backpack", "(my(\\s+))|(backpack)", "A backpack, very handy when it comes to carrying items");
+  private final ItemContainer pocket = new ItemContainer("my backpack",
+      "(my(\\s+))|(backpack)",
+      "A backpack, very handy when it comes to carrying items");
   
+  /**
+   * Getter for the CurrentRoom property
+   *
+   * @return reference to the current room
+   */
   public Room getCurrentRoom() {
     return currentRoom;
   }
   
-  public ItemContainer getBackpack() {
-    return backpack;
+  /**
+   * Getter for the Pocket property
+   *
+   * @return reference to the pocket container
+   */
+  public ItemContainer getPocket() {
+    return pocket;
   }
   
   /**
@@ -55,18 +69,22 @@ public final class Game {
    * Initializes the individual rooms and weaves them together into a singular map
    */
   private void initializeRooms() {
-    // ----------------------------------------------------------------------------------------------------
-  
+    // --- Initialize items -----------------------------------------------------------------------------
+    
     var corridorNote = new Note("Note", "(|paper(\\s+|-))(note)", "\"ERTkdfgkhUI*#5fsGO TO?<85Tudy =r00m///8\"\n");
     var studyRoomKey = new Key("key", 1, "a key");
     var bossRoomBlueKey = new Key("key", "((myster(y|ious)\\s+)key)", 2, "mysterious key");
     var chocolateSquares = new Consumable("chocolate", "choco(|late)", "a delicious bar of chocolate");
+    var chocolatePrison = new Consumable("chocolate", "choco(|late)", "a delicious bar of chocolate");
     var smallBox = new ItemContainer("Small box", "small(\\s+box)", "a small floating box");
     var mediumBox = new ItemContainer("Medium box", "medium(\\s+box)", "a medium floating box");
     var largeBox = new ItemContainer("Large box", "large(\\s+box)", "a large floating box");
     
-    var boxes = new ArrayList<ItemContainer>()
-    {
+    var yellowKey = new Key("yellow key", "yellow(|\\s+key)", 69, "a mysterious yellow key");
+    var greenKey = new Key("green key", "green(|\\s+key)", 34, "a mysterious green key");
+    var blueKey = new Key("blue key", "blue(|\\s+key)", 42, "a mysterious blue key");
+    
+    var boxes = new ArrayList<ItemContainer>() {
       {
         add(smallBox);
         add(mediumBox);
@@ -77,19 +95,31 @@ public final class Game {
     boxes.get(0).add(chocolateSquares);
     boxes.get(1).add(bossRoomBlueKey);
     boxes.clear();
-  
+    
     // --- Initialize rooms -------------------------------------------------------------------------------
     
     var bedroom = new Room("Bedroom", "your bedroom", "");
-    var kitchen = new WinRoom("Kitchen", "", "");
+    var kitchen = new WinRoom("Kitchen",
+        "kitchen",
+        new ArrayList<>() {
+          {
+            add(42);
+            add(34);
+            add(69);
+          }
+        },
+        "It seems that the kitchen is locked by three mysterious padlocks, each of a different color - "
+            + ConsoleEngine.getInstance().formatForegroundStyleCode(TextStyle.Underline)
+            + "blue, green, yellow"
+            + ConsoleEngine.getInstance().formatForegroundStyleCode(TextStyle.Normal));
     var corridor = new Room("Corridor", "the corridor that joins multiple rooms of the house together", "You notice a paper-note lying on the floor.");
     var livingRoom = new Room("Living room", "(living)((\\s+room)|)", "The living room is silent with nobody around.", "You notice a key on the coffee table.");
     var studyRoom = new Room("Study room",
-    "(study)((\\s+room)|)",
-    "the study",
-    "Books are scattered all over the place and where once stood a mighty bookshelf now is a wall with three silhouettes of doors.\n\n" +
-        "Each of a different color - blue, green, yellow.\n\n" +
-        "Only the blue one had a handle drawn, while the others were missing it.",
+        "(study)((\\s+room)|)",
+        "the study",
+        "Books are scattered all over the place and where once stood a mighty bookshelf now is a wall with three silhouettes of doors.\n\n" +
+            "Each of a different color - blue, green, yellow.\n\n" +
+            "Only the blue one had a handle drawn, while the others were missing it.",
         1,
         "It seems that the study is locked");
     
@@ -107,11 +137,15 @@ public final class Game {
     var prison = new Room("Prison", "prison((\\s+room)|)", "", "");
     var bossRoom3 = new BattleRoom("Mystery room", "(mystery)((\\s+room)|)", "", "");
     
-    // ----------------------------------------------------------------------------------------------------
+    // --- Map rooms and items ----------------------------------------------------------------------------
     
-    corridor.add(corridorNote);
+    corridor.add(corridorNote, chocolateSquares);
     livingRoom.add(studyRoomKey);
     squaresRoom.add(smallBox, mediumBox, largeBox);
+    prison.add(chocolatePrison);
+    bossRoom1.add(blueKey);
+    bossRoom2.add(greenKey);
+    bossRoom3.add(yellowKey);
     
     corridor.connect(bedroom, kitchen, livingRoom, studyRoom);
     studyRoom.connect(blueRoom, greenRoom, yellowRoom);
@@ -126,10 +160,20 @@ public final class Game {
     winRoom = kitchen;
   }
   
+  /**
+   * Increases the players health
+   */
   public void addLives() {
+    if (lives == 6)
+      return;
     ++lives;
   }
   
+  /**
+   * Decreases the players health
+   *
+   * @return returns false is the player has died
+   */
   public boolean removeLives() {
     return --lives != 0;
   }
@@ -161,14 +205,29 @@ public final class Game {
     return gameOver;
   }
   
-  public String process(@NotNull Optional<Command> command) {
+  /**
+   * Process a game step
+   *
+   * @param command Step command
+   * @return processing command result
+   */
+  public String processStep(@NotNull Optional<Command> command) {
     var result = processCommand(command);
-    if (currentRoom == winRoom)
+    if (currentRoom == winRoom) {
       gameOver = true;
+      
+      return "You wake up\nCongratulations! You've won the game.";
+    }
     
     return result;
   }
   
+  /**
+   * Process a command
+   *
+   * @param command Command to process
+   * @return processing result
+   */
   private String processCommand(@NotNull final Optional<Command> command) {
     if (command.isEmpty())
       return switch ((int) ((Math.random() * (5 - 1)) + 1)) {
@@ -188,37 +247,109 @@ public final class Game {
       case Unlock -> unlock(extracted);
       case Where -> where();
       case Examine -> examine(extracted);
+      case Eat -> eat(extracted);
       case End -> end();
     };
   }
   
+  /**
+   * Gets the description of the current room
+   *
+   * @return current room description
+   */
   public String getRoomDescription() {
     return currentRoom.getDescription();
   }
   
+  /**
+   * Gets the names of the connected rooms
+   *
+   * @return names of the connected rooms
+   */
   public String getRoomExists() {
     return currentRoom.getRoomNames();
   }
   
+  // --- Commands ------------------------------------------------------------------------------------------------------
+  
+  /**
+   * Command for ending the game
+   *
+   * @return processing result
+   */
   private String end() {
+    // Set the game state
     gameOver = true;
+    // Notify the user
     return "game stopped";
   }
   
-  private String carry(Command command) {
+  /**
+   * Command for eating consumables that are carried in the players pocket
+   *
+   * @param command eat command source
+   * @return processing result
+   */
+  private String eat(@NotNull final Command command) {
+    // If the command is missing the parameter..
     if (command.hasNoParameter())
-      return "Carry what?";
+      // ask the user to specify it
+      return "Eat what?";
     
-    var item = currentRoom.takeOut(command.getParameter());
+    // Try retrieve the item from the pocket
+    var item = pocket.takeOut(command.getParameter());
     
+    // If no item was found
     if (item.isEmpty())
+      // notify the user
       return "I don't know what that is";
     
-    backpack.add(item.get());
+    // If the item is consumable..
+    if (item.get() instanceof Consumable) {
+      // Increase health
+      addLives();
+      
+      // Notify the user
+      return "You take the " + item.get().getDisplayName() + " and eat it";
+    }
     
-    return "Put the " + item.get().getDisplayName() + " in the backpack";
+    // Notify the user
+    return "Can't eat that";
   }
   
+  /**
+   * Command for carrying items
+   *
+   * @param command carry command source
+   * @return processing result
+   */
+  private String carry(@NotNull final Command command) {
+    // If the command is missing the parameter..
+    if (command.hasNoParameter())
+      // ask the user to specify it
+      return "Carry what?";
+    
+    // Try to get the item to carry
+    var item = currentRoom.takeOut(command.getParameter());
+    
+    // If no item was found..
+    if (item.isEmpty())
+      // notify the user
+      return "I don't know what that is";
+    
+    // Put the item in the pocket
+    pocket.add(item.get());
+    
+    // Notify the user
+    return "You take the " + item.get().getDisplayName() + " and put in inside your pocket";
+  }
+  
+  /**
+   * Command for retrieving the manual
+   *
+   * @param command manual command source
+   * @return processing result
+   */
   private String manual(@NotNull final Command command) {
     return command.hasNoParameter()
         ? "Type what you wish to do and press enter (more than one way to enter a command is supported)"
@@ -228,57 +359,147 @@ public final class Game {
         : validCommands.getCommandManual(command.getParameter());
   }
   
+  /**
+   * Command for examining items
+   *
+   * @param command examine command source
+   * @return processing result
+   */
   private String examine(@NotNull final Command command) {
+    // If the command is missing the parameter..
     if (command.hasNoParameter())
+      // ask the user to specify it
       return "But what?";
     
+    // Try get the item to examine
     var item = currentRoom
+        // Get all of the room items
         .getItems()
+        // Iterate over each item
         .stream()
-        .filter(x -> x.getDisplayName().equalsIgnoreCase(command.getParameter()))
+        // Find the items that match the request
+        .filter(x -> x.isMatch(command.getParameter()))
+        // Try get the first item
         .findFirst();
     
+    // If no item was found..
     if (item.isEmpty())
+      // notify the player
       return "That's not here";
+    
+    // Get the item description
     return item.get().getDescription();
   }
   
+  /**
+   * Command for unlocking rooms and item containers
+   *
+   * @param command unlock command source
+   * @return processing result
+   */
   private String unlock(@NotNull final Command command) {
+    // If the command is missing the parameter..
     if (command.hasNoParameter())
+      // ask the user to specify it
       return "Unlock what?";
     
+    // Get the entity name to unlock
     var name = command.getParameter();
+    
+    // Get all of the keys
+    var keys = pocket
+        // Get all carried items
+        .getItems()
+        // Iterate over every item
+        .stream()
+        // Materialize a collection of key items
+        .filter(x -> x instanceof Key).map(x -> (Key) x).collect(Collectors.toUnmodifiableList());
+  
+    // Try to get a room
     var room = currentRoom.getRoom(name);
+    // If no room was found..
     if (room.isEmpty()) {
+      // Get an lockable item
       var item = currentRoom
+          // Get all room items
           .getItems()
+          // Iterate over all items
           .stream()
-          .filter(x -> x instanceof ItemContainer && x.getDisplayName().equalsIgnoreCase(name))
+          // Find matching items that are containers
+          .filter(x -> x instanceof ItemContainer && x.isMatch(name))
+          // Cast the items to item containers
           .map(x -> (ItemContainer) x)
+          // Try get the first lockable item
           .findFirst();
       
+      // If no item was found..
       if (item.isEmpty())
+        // notify the user
         return "Don't know what that is";
-    }
-    else
-    {
-      var roomElement = room.get();
   
+      // For every key..
+      for (var key : keys)
+        // Try to unlock the container with it
+        if (item.get().unlock(key))
+          // notify the user
+          return name + " is now open";
+    }
+    // Otherwise..
+    else {
+      // Get the room to unlock
+      var roomElement = room.get();
+      
+      // If the room is not locked..
       if (!roomElement.isLocked())
+        // notify the user
         return name + " is not locked";
-      else
-        for (var key : backpack.getItems().stream().filter(x -> x instanceof Key).map(x -> (Key) x).collect(Collectors.toUnmodifiableList()))
-          if (roomElement.unlock(key))
+      // Otherwise..
+      else {
+        // If the room is the win room..
+        if (roomElement instanceof WinRoom) {
+          // Cast the room
+          var winRoom = (WinRoom) roomElement;
+          
+          // If the room was unlocked..
+          if (winRoom.unlock(keys))
+            // notify the user
             return name + " is now open";
+          // Otherwise
+          else
+            // notify the user
+            return name + " won't open. Probably needs more keys";
+        }
+        // Otherwise..
+        else
+          // For every key..
+          for (var key : keys)
+            // Try to unlock the room with it
+            if (roomElement.unlock(key))
+              // notify the user
+              return name + " is now open";
+      }
     }
     
+    // notify the user
     return "Don't know what that is";
   }
   
+  /**
+   * Command for returning the current room description
+   *
+   * @return current room description
+   */
   private String where() {
+    // Get the current room description
     return currentRoom.getDescription();
   }
   
+  /**
+   * Command for navigating to a different room
+   *
+   * @param command go command source
+   * @return processing result
+   */
   private String go(@NotNull final Command command) {
     // If the command is missing the parameter..
     if (command.hasNoParameter())
@@ -288,9 +509,12 @@ public final class Game {
     // Get the specified room name
     var room = command.getParameter();
     
+    // Try to get the next room
     var nextRoom = currentRoom.getRoom(room);
     
+    // If no room was found..
     if (nextRoom.isEmpty())
+      // notify the user with a random message
       return switch ((int) ((Math.random() * (4 - 1)) + 1)) {
         case 1 -> "Can't see where that is";
         case 2 -> "I don't know where that is.";
@@ -298,12 +522,18 @@ public final class Game {
         default -> "Where's that?";
       };
     
+    // Unwrap the found room
     var extracted = nextRoom.get();
+    // If the room is locked..
     if (extracted.isLocked())
+      // get the room locked message
       //noinspection OptionalGetWithoutIsPresent
       return extracted.getLockedMessage().get();
     
+    // Set the next room as the current
     currentRoom = extracted;
+    
+    // Describe the newly entered room
     return currentRoom.getDescription();
   }
 }

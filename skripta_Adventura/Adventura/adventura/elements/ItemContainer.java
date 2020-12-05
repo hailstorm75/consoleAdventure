@@ -39,30 +39,68 @@ public class ItemContainer extends Item {
    * @return string representation of the items present in given room
    */
   private String itemNames() {
-    return items.stream().map(Item::getDisplayName).collect(Collectors.joining("  "));
+    return items
+        // Iterate over items
+        .stream()
+        // Retrieve item names
+        .map(Item::getDisplayName)
+        // Materialize the item names into a string
+        .collect(Collectors.joining("  "));
   }
   
+  /**
+   * Get the contained items
+   *
+   * @return contained items collection
+   */
   public Collection<Item> getItems() {
-    return items.stream().collect(Collectors.toUnmodifiableList());
+    return items
+        // Iterate over items
+        .stream()
+        // Materialize them into an unmodifiable collection
+        .collect(Collectors.toUnmodifiableList());
   }
- 
-  public final boolean isLocked() {
+  
+  /**
+   * Checks if the entity is locked
+   *
+   * @return true if the entity is locked
+   */
+  public boolean isLocked() {
     return lockId > 0;
   }
   
+  /**
+   * Getter for the LockedMessage property
+   *
+   * @return locked message
+   */
   public final Optional<String> getLockedMessage() {
     return isLocked()
         ? Optional.of(lockedMessage)
         : Optional.empty();
   }
   
-  public final boolean unlock(Key key) {
+  /**
+   * Attempts to unlock the current entity
+   *
+   * @param key key to use to unlock
+   * @return true if unlocked
+   */
+  public boolean unlock(Key key) {
+    // If the entity is already unlocked..
     if (!isLocked())
-      return false;
-    if (lockId != key.getId())
+      // nothing was unlocked
       return false;
     
+    // If the key doesn't fit..
+    if (lockId != key.getId())
+      // nothing was unlocked
+      return false;
+    
+    // Set the locked state
     lockId = -1;
+    // The entity was unlocked
     return true;
   }
   
@@ -74,8 +112,10 @@ public class ItemContainer extends Item {
    */
   public final boolean hasItem(@NotNull String name) {
     return items
+        // Iterate over items
         .stream()
-        .anyMatch(x -> x.getDisplayName().equals(name));
+        // Check if an item with the given name exists
+        .anyMatch(x -> x.isMatch(name));
   }
   
   /**
@@ -85,18 +125,30 @@ public class ItemContainer extends Item {
    * @return the removed item
    */
   public Optional<Item> takeOut(@NotNull String name) {
+    // Try get the item to take out
     var item = items
+        // Iterate over items
         .stream()
-        .filter(x -> x.getDisplayName().equals(name))
+        // Filter out the matching items
+        .filter(x -> x.isMatch(name))
+        // Try get the matching item
         .findFirst();
   
+    // If no item was found..
     if (item.isEmpty())
+      // return empty
       return Optional.empty();
   
+    // Extract the found item
     var extracted = item.get();
-    if (extracted.getCanCarry())
-      items.remove(extracted);
-  
+    // If the item can't be carried..
+    if (!extracted.getCanCarry())
+      // return empty
+      return Optional.empty();
+    
+    // remove the item from the container
+    items.remove(extracted);
+    // return the wrapped item
     return Optional.of(extracted);
   }
 }

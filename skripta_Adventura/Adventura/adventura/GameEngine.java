@@ -48,8 +48,13 @@ public final class GameEngine {
         .setStyle(TextStyle.BrightBold)
         .print("<3")
         .setDefaultStyle()
+        .print(" ".repeat(20 - lives * 2))
+        .setStyle(TextStyle.Bold)
+        .print("Inventory: ")
+        .setDefaultStyle()
+        .print(game.getPocket().getItems().size() + "")
         .print("\n");
-    
+
     System.out.println();
   }
   
@@ -70,8 +75,9 @@ public final class GameEngine {
       var input = getInput();
       var command = Command.initialize(input);
   
+      var output = game.processStep(command);
       drawHud();
-      ConsoleEngine.getInstance().typeOutLn(game.process(command));
+      ConsoleEngine.getInstance().typeOutLn(output);
     }
     
     System.out.println(game.getEpilogue());

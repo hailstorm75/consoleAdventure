@@ -23,6 +23,7 @@ public final class CommandsRepository {
     put(Pattern.compile("(?<COMMAND>(carry|take)(|(\\s+)the))((\\s+)(?<INPUT>.+))?", Pattern.CASE_INSENSITIVE), CommandType.Carry);
     put(Pattern.compile("(?<COMMAND>(unlock|open)(|(\\s+)the))((\\s+)(?<INPUT>.+))?", Pattern.CASE_INSENSITIVE), CommandType.Unlock);
     put(Pattern.compile("(?<COMMAND>((examine|inspect)(((\\s+)the)|))|(look(\\s+)at))(\\s+(?<INPUT>.+))?", Pattern.CASE_INSENSITIVE), CommandType.Examine);
+    put(Pattern.compile("(?<COMMAND>((eat|consume|devour)(((\\s+)the)|)))(\\s+(?<INPUT>.+))?", Pattern.CASE_INSENSITIVE), CommandType.Eat);
     put(Pattern.compile("(quit|stop|end|exit)(((\\s+)the|)(\\s+)game|)", Pattern.CASE_INSENSITIVE), CommandType.End);
   }};
   

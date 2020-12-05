@@ -33,6 +33,10 @@ public enum CommandType {
    */
   Examine("Examine"),
   /**
+   * Eats a consumable
+   */
+  Eat("Eat"),
+  /**
    * Ends the game
    */
   End("End");
