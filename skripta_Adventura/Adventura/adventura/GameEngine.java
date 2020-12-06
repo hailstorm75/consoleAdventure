@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 /**
  * Class for running the game
  *
- * @author Michael Kolling, Lubos Pavlicek, Jarmila Pavlickova, Denis Akopyan
+ * @author Denis Akopyan
  * @version 3.0
  */
 public final class GameEngine {

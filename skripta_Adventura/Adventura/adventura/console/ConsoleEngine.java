@@ -136,23 +136,24 @@ public class ConsoleEngine {
   }
   
   private ConsoleEngine typeOut(@NotNull String input, boolean newLine) {
-    var i = 0;
-    var styleCode = false;
-    for (; i < input.length(); i++) {
-      System.out.print(input.charAt(i));
-
-      if (!styleCode && input.charAt(i) == '\033')
-        styleCode = true;
-      else if (styleCode && input.charAt(i) == 'm')
-        styleCode = false;
-
-      if (!styleCode)
-        try {
-          TimeUnit.MILLISECONDS.sleep(100);
-        } catch (InterruptedException ie) {
-          Thread.currentThread().interrupt();
-        }
-    }
+//    var i = 0;
+//    var styleCode = false;
+//    for (; i < input.length(); i++) {
+//      System.out.print(input.charAt(i));
+//
+//      if (!styleCode && input.charAt(i) == '\033')
+//        styleCode = true;
+//      else if (styleCode && input.charAt(i) == 'm')
+//        styleCode = false;
+//
+//      if (!styleCode)
+//        try {
+//          TimeUnit.MILLISECONDS.sleep(100);
+//        } catch (InterruptedException ie) {
+//          Thread.currentThread().interrupt();
+//        }
+//    }
+    System.out.print(input);
     
     if (newLine)
       System.out.println();

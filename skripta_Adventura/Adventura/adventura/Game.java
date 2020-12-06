@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 /**
  * Class containing the game logic
  *
- * @author Michael Kolling, Lubos Pavlicek, Jarmila Pavlickova, Denis Akopyan
+ * @author Denis Akopyan
  * @version 3.0
  */
 public final class Game {
@@ -123,11 +123,11 @@ public final class Game {
         1,
         "It seems that the study is locked");
     
-    var blueRoom = new Room("Blue room", "(blue)((\\s+room)|)", "", "");
-    var squaresRoom = new Room("Squares", "(square(s|))((\\s+room)|)", "", "");
+    var blueRoom = new Room("Blue room", "(blue)((\\s+room)|)", "You are inside the mysterious blue room. Numbers are written on every wall.", "");
+    var squaresRoom = new Room("Squares", "(square(s|))((\\s+room)|)", "You are in a room full of square shapes floating in the air, some are combined into boxes, three to be exact\nEach box is of a different size - small, medium and large", "");
     var bossRoom1 = new BattleRoom("Mystery room", "(mystery)((\\s+room)|)", "", "", 2, "The door to the mystery room is locked. Probably needs a key.");
     
-    var greenRoom = new Room("Green room", "(green)((\\s+room)|)", "", "");
+    var greenRoom = new Room("Green room", "(green)((\\s+room)|)", "You are inside the mysterious green room. Letters are written on every wall.", "");
     var circlesRoom = new Room("Circles", "(circle(s|))((\\s+room)|)", "", "");
     var trianglesRoom = new TrapRoom("Triangles", "(triangle(s|))((\\s+room)|)", "", "");
     var numbersRoom = new Room("Numbers", "(number(s|))((\\s+room)|)", "", "");
@@ -534,6 +534,10 @@ public final class Game {
     currentRoom = extracted;
     
     // Describe the newly entered room
-    return currentRoom.getDescription();
+    var description = currentRoom.getDescription();
+    // Mark the room as discovered
+    currentRoom.discover();
+    
+    return description;
   }
 }
