@@ -14,7 +14,7 @@ public class ItemContainer extends Item {
   /**
    * Default constructor
    *
-   * @param displayName     name of the item container
+   * @param displayName name of the item container
    * @param description description of the item container
    */
   public ItemContainer(@NotNull String displayName, @NotNull String matchName, @NotNull String description, int lockId, @NotNull String lockedMessage) {
@@ -27,6 +27,12 @@ public class ItemContainer extends Item {
     this(displayName, matchName, description, -1, "");
   }
   
+  /**
+   * Adds given items to the container
+   *
+   * @param items Items to add
+   * @return instance to the items container for method chaining
+   */
   public ItemContainer add(Item... items) {
     this.items.addAll(Arrays.asList(items));
     

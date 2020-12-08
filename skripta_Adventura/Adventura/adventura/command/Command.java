@@ -8,7 +8,7 @@ import java.util.Optional;
 /**
  * Class representing a command requested by the user
  *
- * @author Michael Kolling, Lubos Pavlicek, Jarmila Pavlickova, Denis Akopyan
+ * @author Denis Akopyan
  * @version 3.0
  */
 public class Command {
@@ -40,12 +40,17 @@ public class Command {
    * @return initialized command. Empty if the command was unrecognized
    */
   public static Optional<Command> initialize(@NotNull String input) {
+    // Parse the user-input
     var parsed = CommandsRepository.identifyCommand(normalizeString(input));
+    // If the parsing failed..
     if (parsed.isEmpty())
+      // return nothing
       return Optional.empty();
     
+    // Extract the data
     var data = parsed.get();
     
+    // Materialize the data into a command
     return Optional.of(new Command(data.getItem1(), data.getItem2().orElse("")));
   }
   

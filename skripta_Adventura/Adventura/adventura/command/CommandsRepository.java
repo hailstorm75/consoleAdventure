@@ -9,8 +9,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
+ * Repository of supported game commands
  *
- * @author Michael Kolling, Lubos Pavlicek, Jarmila Pavlickova, Denis Akopyan
+ * @author Denis Akopyan
  * @version 3.0
  */
 public final class CommandsRepository {
@@ -56,21 +57,21 @@ public final class CommandsRepository {
    * @return command type and parameter. Empty if the command is unknown
    */
   public static Optional<Tuple<CommandType, Optional<String>>> identifyCommand(@NotNull String input) {
+    // For every known command..
     for (var command : commands.entrySet()) {
+      // Try to match it with the user input
       var match = command.getKey().matcher(input);
+      // If there is no match..
       if (!match.matches())
+        // move to the next command
         continue;
       
+      // Parse the user-input
       return Optional.of(new Tuple<>(command.getValue(), findInputGroup(match)));
     }
     
+    // Return nothing
     return Optional.empty();
-  }
-  
-  public boolean isValidCommand(@NotNull String command) {
-    return Command
-        .initialize(command)
-        .isPresent();
   }
   
   /**
@@ -94,9 +95,13 @@ public final class CommandsRepository {
    */
   public String getCommandsManual() {
     return commandsManual
+        // Get all commands
         .keySet()
+        // Iterate over commands
         .stream()
+        // Wrap the command names
         .map(x -> "'" + x.getName() + "'")
+        // Materialize the command names into a string
         .collect(Collectors.joining(" "));
   }
 }

@@ -3,9 +3,17 @@ package elements.specialItems;
 import elements.Item;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Class representing a key for locking ItemContainers
+ */
 public class Key extends Item {
   private final int id;
   
+  /**
+   * Getter for the Id property
+   *
+   * @return id value
+   */
   public int getId() {
     return id;
   }
@@ -13,7 +21,7 @@ public class Key extends Item {
   /**
    * Default constructor
    *
-   * @param name     name of the item
+   * @param name name of the item
    */
   public Key(@NotNull String name, int id, @NotNull String description) {
     super(name, true, description);

@@ -16,6 +16,11 @@ public final class GameEngine {
   private final Game game;
   private final static GameEngine instance = new GameEngine();
   
+  /**
+   * Getter for the singleton GameEngine instance
+   *
+   * @return singleton instance
+   */
   public static Game getGameInstance() {
     return getInstance().game;
   }
@@ -71,6 +76,7 @@ public final class GameEngine {
         .setDefaultStyle()
         .println(game.getRoomExists());
   
+    // Until the game is over..
     while (!game.isGameOver()) {
       var input = getInput();
       var command = Command.initialize(input);
@@ -79,8 +85,6 @@ public final class GameEngine {
       drawHud();
       ConsoleEngine.getInstance().typeOutLn(output);
     }
-    
-    System.out.println(game.getEpilogue());
   }
   
   /**

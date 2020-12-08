@@ -112,8 +112,13 @@ public final class Game {
             + ConsoleEngine.getInstance().formatForegroundStyleCode(TextStyle.Underline)
             + "blue, green, yellow"
             + ConsoleEngine.getInstance().formatForegroundStyleCode(TextStyle.Normal));
-    var corridor = new Room("Corridor", "the corridor that joins multiple rooms of the house together", "You notice a paper-note lying on the floor.");
-    var livingRoom = new Room("Living room", "(living)((\\s+room)|)", "The living room is silent with nobody around.", "You notice a key on the coffee table.");
+    var corridor = new Room("Corridor",
+        "the corridor that joins multiple rooms of the house together",
+        "You notice a paper-note lying on the floor.");
+    var livingRoom = new Room("Living room",
+        "(living)((\\s+room)|)",
+        "The living room is silent with nobody around.",
+        "You notice a key on the coffee table.");
     var studyRoom = new Room("Study room",
         "(study)((\\s+room)|)",
         "the study",
@@ -123,19 +128,61 @@ public final class Game {
         1,
         "It seems that the study is locked");
     
-    var blueRoom = new Room("Blue room", "(blue)((\\s+room)|)", "You are inside the mysterious blue room. Numbers are written on every wall.", "");
-    var squaresRoom = new Room("Squares", "(square(s|))((\\s+room)|)", "You are in a room full of square shapes floating in the air, some are combined into boxes, three to be exact\nEach box is of a different size - small, medium and large", "");
-    var bossRoom1 = new BattleRoom("Mystery room", "(mystery)((\\s+room)|)", "", "", 2, "The door to the mystery room is locked. Probably needs a key.");
+    var blueRoom = new Room("Blue room",
+        "(blue)((\\s+room)|)",
+        "You are inside the mysterious blue room. Numbers are written on every wall.",
+        "");
+    var squaresRoom = new Room("Squares",
+        "(square(s|))((\\s+room)|)",
+        "You are in a room full of square shapes floating in the air, some are combined into boxes, three to be exact\nEach box is of a different size - small, medium and large",
+        "");
+    var bossRoom1 = new BattleRoom("Mystery room",
+        "(mystery)((\\s+room)|)",
+        "",
+        "",
+        new BattleArguments(3, 3, "%d + %d - %d", generator -> generator.get(0) + generator.get(1) - generator.get(2)),
+        2,
+        "The door to the mystery room is locked. Probably needs a key.");
     
-    var greenRoom = new Room("Green room", "(green)((\\s+room)|)", "You are inside the mysterious green room. Letters are written on every wall.", "");
-    var circlesRoom = new Room("Circles", "(circle(s|))((\\s+room)|)", "", "");
-    var trianglesRoom = new TrapRoom("Triangles", "(triangle(s|))((\\s+room)|)", "", "");
-    var numbersRoom = new Room("Numbers", "(number(s|))((\\s+room)|)", "", "");
-    var bossRoom2 = new BattleRoom("Mystery room", "(mystery)((\\s+room)|)", "", "");
+    var greenRoom = new Room("Green room",
+        "(green)((\\s+room)|)",
+        "You are inside the mysterious green room. Letters are written on every wall.",
+        "");
+    var circlesRoom = new Room("Circles",
+        "(circle(s|))((\\s+room)|)",
+        "",
+        "");
+    var trianglesRoom = new TrapRoom("Triangles",
+        "(triangle(s|))((\\s+room)|)",
+        "",
+        "");
+    var numbersRoom = new Room("Numbers",
+        "(number(s|))((\\s+room)|)",
+        "",
+        "");
+    var bossRoom2 = new BattleRoom("Mystery room",
+        "(mystery)((\\s+room)|)",
+        "",
+        "",
+        new BattleArguments(4, 2, "%d * %d", generator -> generator.get(0) * generator.get(1)),
+        666666,
+        "");
     
-    var yellowRoom = new Room("Yellow room", "(yellow)((\\s+room)|)", "", "");
-    var prison = new Room("Prison", "prison((\\s+room)|)", "", "");
-    var bossRoom3 = new BattleRoom("Mystery room", "(mystery)((\\s+room)|)", "", "");
+    var yellowRoom = new Room("Yellow room",
+        "(yellow)((\\s+room)|)",
+        "",
+        "");
+    var prison = new Room("Prison",
+        "prison((\\s+room)|)",
+        "",
+        "");
+    var bossRoom3 = new BattleRoom("Mystery room",
+        "(mystery)((\\s+room)|)",
+        "",
+        "",
+        new BattleArguments(5, 3, "%d * %d + %d", generator -> generator.get(0) * generator.get(1) + generator.get(2)),
+        666666,
+        "");
     
     // --- Map rooms and items ----------------------------------------------------------------------------
     
@@ -212,13 +259,18 @@ public final class Game {
    * @return processing command result
    */
   public String processStep(@NotNull Optional<Command> command) {
+    // Process the step command
     var result = processCommand(command);
+    // If the player is in the win room..
     if (currentRoom == winRoom) {
+      // End the game
       gameOver = true;
       
+      // Notify the user
       return "You wake up\nCongratulations! You've won the game.";
     }
     
+    // return processing result
     return result;
   }
   
@@ -229,7 +281,9 @@ public final class Game {
    * @return processing result
    */
   private String processCommand(@NotNull final Optional<Command> command) {
+    // If the command is invalid..
     if (command.isEmpty())
+      // notify the user using a random message
       return switch ((int) ((Math.random() * (5 - 1)) + 1)) {
         case 1 -> "Come again?";
         case 2 -> "Didn't catch that.";
@@ -238,8 +292,10 @@ public final class Game {
         default -> "Huh?";
       };
     
+    // Extract the command
     var extracted = command.get();
     
+    // Process the command based on its category
     return switch (extracted.getType()) {
       case Help -> manual(extracted);
       case Carry -> carry(extracted);
@@ -414,7 +470,7 @@ public final class Game {
         .stream()
         // Materialize a collection of key items
         .filter(x -> x instanceof Key).map(x -> (Key) x).collect(Collectors.toUnmodifiableList());
-  
+    
     // Try to get a room
     var room = currentRoom.getRoom(name);
     // If no room was found..
@@ -436,7 +492,7 @@ public final class Game {
       if (item.isEmpty())
         // notify the user
         return "Don't know what that is";
-  
+      
       // For every key..
       for (var key : keys)
         // Try to unlock the container with it
@@ -453,7 +509,7 @@ public final class Game {
       if (!roomElement.isLocked())
         // notify the user
         return name + " is not locked";
-      // Otherwise..
+        // Otherwise..
       else {
         // If the room is the win room..
         if (roomElement instanceof WinRoom) {
@@ -464,7 +520,7 @@ public final class Game {
           if (winRoom.unlock(keys))
             // notify the user
             return name + " is now open";
-          // Otherwise
+            // Otherwise
           else
             // notify the user
             return name + " won't open. Probably needs more keys";
