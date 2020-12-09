@@ -78,11 +78,16 @@ public final class GameEngine {
   
     // Until the game is over..
     while (!game.isGameOver()) {
+      // Get the user-input
       var input = getInput();
+      // Compose the input into a command
       var command = Command.initialize(input);
   
+      // Process the command and get result
       var output = game.processStep(command);
+      // Draw the game HUD
       drawHud();
+      // Print the command result
       ConsoleEngine.getInstance().typeOutLn(output);
     }
   }

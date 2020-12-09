@@ -1,9 +1,8 @@
 package console;
 
-import common.Tuple;
+import common.Tuple2;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 /**
@@ -62,13 +61,13 @@ public class ConsoleEngine {
     return String.format("\033[%d;%dm", mode, color);
   }
   
-  private static Tuple<Integer, Integer> styleToValues(TextStyle style) {
+  private static Tuple2<Integer, Integer> styleToValues(TextStyle style) {
     return switch (style) {
-      case Normal -> new Tuple<>(0, 0);
-      case Bold -> new Tuple<>(1, 0);
-      case Bright -> new Tuple<>(0, 60);
-      case BrightBold -> new Tuple<>(1, 60);
-      case Underline -> new Tuple<>(4, 0);
+      case Normal -> new Tuple2<>(0, 0);
+      case Bold -> new Tuple2<>(1, 0);
+      case Bright -> new Tuple2<>(0, 60);
+      case BrightBold -> new Tuple2<>(1, 60);
+      case Underline -> new Tuple2<>(4, 0);
     };
   }
   

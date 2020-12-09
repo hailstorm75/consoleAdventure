@@ -44,7 +44,7 @@ public class ItemContainer extends Item {
    *
    * @return string representation of the items present in given room
    */
-  private String itemNames() {
+  public String itemNames() {
     return items
         // Iterate over items
         .stream()

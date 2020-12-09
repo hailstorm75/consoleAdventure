@@ -138,8 +138,10 @@ public final class Game {
         "");
     var bossRoom1 = new BattleRoom("Mystery room",
         "(mystery)((\\s+room)|)",
-        "",
-        "",
+        "You are inside the mystery room. Darkness. Nothing to see.",
+        "You feel something watching you\n" +
+            "Suddenly, you are hit by a sharp plus sign\n" +
+            "A monster appears!",
         new BattleArguments(3, 3, "%d + %d - %d", generator -> generator.get(0) + generator.get(1) - generator.get(2)),
         2,
         "The door to the mystery room is locked. Probably needs a key.");
@@ -348,12 +350,12 @@ public final class Game {
    */
   private String eat(@NotNull final Command command) {
     // If the command is missing the parameter..
-    if (command.hasNoParameter())
+    if (command.hasNoFirstParameter())
       // ask the user to specify it
       return "Eat what?";
     
     // Try retrieve the item from the pocket
-    var item = pocket.takeOut(command.getParameter());
+    var item = pocket.takeOut(command.getFirstParameter());
     
     // If no item was found
     if (item.isEmpty())
@@ -381,22 +383,45 @@ public final class Game {
    */
   private String carry(@NotNull final Command command) {
     // If the command is missing the parameter..
-    if (command.hasNoParameter())
+    if (command.hasNoFirstParameter())
       // ask the user to specify it
       return "Carry what?";
     
-    // Try to get the item to carry
-    var item = currentRoom.takeOut(command.getParameter());
+    if (command.hasNoSecondParameter()) {
+      // Try to get the item to carry
+      var item = currentRoom.takeOut(command.getFirstParameter());
+      
+      // If no item was found..
+      if (item.isEmpty())
+        // notify the user
+        return "I don't know what that is";
+      
+      // Put the item in the pocket
+      pocket.add(item.get());
+      
+      // Notify the user
+      return "You take the " + item.get().getDisplayName() + " and put in inside your pocket";
+    }
     
-    // If no item was found..
+    var container = currentRoom
+        .getItems()
+        .stream()
+        .filter(item -> item instanceof ItemContainer)
+        .map(item -> (ItemContainer)item)
+        .filter(c -> c.isMatch(command.getSecondParameter()))
+        .findFirst();
+    
+    if (container.isEmpty())
+      return "Don't know where to take " + command.getFirstParameter() + " from";
+    
+    var extractedC = container.get();
+    var item = extractedC.takeOut(command.getFirstParameter());
+    
     if (item.isEmpty())
-      // notify the user
-      return "I don't know what that is";
+      return "There is no such item inside " + command.getSecondParameter();
     
-    // Put the item in the pocket
     pocket.add(item.get());
-    
-    // Notify the user
+  
     return "You take the " + item.get().getDisplayName() + " and put in inside your pocket";
   }
   
@@ -407,12 +432,12 @@ public final class Game {
    * @return processing result
    */
   private String manual(@NotNull final Command command) {
-    return command.hasNoParameter()
+    return command.hasNoFirstParameter()
         ? "Type what you wish to do and press enter (more than one way to enter a command is supported)"
         + "\n"
         + "The following command types are available:\n"
         + validCommands.getCommandsManual()
-        : validCommands.getCommandManual(command.getParameter());
+        : validCommands.getCommandManual(command.getFirstParameter());
   }
   
   /**
@@ -423,7 +448,7 @@ public final class Game {
    */
   private String examine(@NotNull final Command command) {
     // If the command is missing the parameter..
-    if (command.hasNoParameter())
+    if (command.hasNoFirstParameter())
       // ask the user to specify it
       return "But what?";
     
@@ -434,7 +459,7 @@ public final class Game {
         // Iterate over each item
         .stream()
         // Find the items that match the request
-        .filter(x -> x.isMatch(command.getParameter()))
+        .filter(x -> x.isMatch(command.getFirstParameter()))
         // Try get the first item
         .findFirst();
     
@@ -443,8 +468,22 @@ public final class Game {
       // notify the player
       return "That's not here";
     
+    var extracted = item.get();
+    
+    if (extracted instanceof ItemContainer) {
+      var container = (ItemContainer) extracted;
+      var size = container.getItems().size();
+      
+      return "You take a look inside the "
+          + container.getDisplayName()
+          + ". "
+          + (size == 0
+          ? "It is empty."
+          : "Inside you find" + (size > 1 ? " " : " a ") + container.itemNames());
+    }
+    
     // Get the item description
-    return item.get().getDescription();
+    return extracted.getDescription();
   }
   
   /**
@@ -455,12 +494,12 @@ public final class Game {
    */
   private String unlock(@NotNull final Command command) {
     // If the command is missing the parameter..
-    if (command.hasNoParameter())
+    if (command.hasNoFirstParameter())
       // ask the user to specify it
       return "Unlock what?";
     
     // Get the entity name to unlock
-    var name = command.getParameter();
+    var name = command.getFirstParameter();
     
     // Get all of the keys
     var keys = pocket
@@ -558,12 +597,12 @@ public final class Game {
    */
   private String go(@NotNull final Command command) {
     // If the command is missing the parameter..
-    if (command.hasNoParameter())
+    if (command.hasNoFirstParameter())
       // ask the user to specify it
       return "Where to? Specify the room name";
     
     // Get the specified room name
-    var room = command.getParameter();
+    var room = command.getFirstParameter();
     
     // Try to get the next room
     var nextRoom = currentRoom.getRoom(room);

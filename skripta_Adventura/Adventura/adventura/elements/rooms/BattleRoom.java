@@ -1,6 +1,6 @@
 package elements.rooms;
 
-import common.Tuple;
+import common.Tuple2;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.LinkedList;
@@ -24,6 +24,17 @@ public class BattleRoom extends Room {
     return rounds;
   }
   
+  /**
+   * Default constructor
+   *
+   * @param displayName room name
+   * @param matchName room match name
+   * @param description room description
+   * @param firstEntryDescription first entry message
+   * @param battleArguments arguments for the battle room
+   * @param lockId lock key id
+   * @param lockedMessage locked message
+   */
   public BattleRoom(@NotNull String displayName,
                     @NotNull String matchName,
                     @NotNull String description,
@@ -44,7 +55,7 @@ public class BattleRoom extends Room {
    *
    * @return tuple of the problem format and expected result
    */
-  public Tuple<String, Integer> generateProblem() {
+  public Tuple2<String, Integer> generateProblem() {
     // Prepare the parameters collection
     var parameters = new LinkedList<Integer>();
     // For the number of required parameters..
@@ -53,6 +64,6 @@ public class BattleRoom extends Room {
       parameters.add(numberGenerator.nextInt(50));
     
     // Materialize the result
-    return new Tuple<>(String.format(problemFormat, parameters), problemGenerator.apply(parameters));
+    return new Tuple2<>(String.format(problemFormat, parameters), problemGenerator.apply(parameters));
   }
 }

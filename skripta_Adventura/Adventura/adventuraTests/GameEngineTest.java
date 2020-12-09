@@ -1,5 +1,5 @@
 import command.Command;
-import common.Tuple;
+import common.Tuple2;
 import elements.ItemContainer;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -82,7 +82,7 @@ class GameEngineTest {
         .filter(item -> item instanceof ItemContainer)
         .map(item -> (ItemContainer) item)
         .filter(itemContainer -> itemContainer.getItems().size() != 0)
-        .map(itemContainer -> new Tuple<>(itemContainer.getDisplayName(), itemContainer.getItems().stream().findFirst().get()))
+        .map(itemContainer -> new Tuple2<>(itemContainer.getDisplayName(), itemContainer.getItems().stream().findFirst().get()))
         .forEach(item -> game.processStep(Command.initialize("take " + item.getItem2() + " from " + item.getItem1())));
     
     assertEquals(2, game.getPocket().getItems().size());
@@ -369,12 +369,12 @@ class GameEngineTest {
         .stream()
         .filter(item -> item instanceof ItemContainer)
         .map(item -> (ItemContainer) item)
-        .map(itemContainer -> new Tuple<>(itemContainer.getDisplayName(), itemContainer.getItems().stream().findFirst()))
+        .map(itemContainer -> new Tuple2<>(itemContainer.getDisplayName(), itemContainer.getItems().stream().findFirst()))
         .collect(Collectors.toList());
     
     for (var item : items) {
       if (item.getItem2().isEmpty())
-        assertEquals("You take a look at the " +
+        assertEquals("You take a look inside the " +
                 item.getItem1().toLowerCase() +
                 ". It is empty.\n" +
                 "From here you can go to: study, square room, mystery room",

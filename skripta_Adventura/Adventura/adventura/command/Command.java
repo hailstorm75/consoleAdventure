@@ -13,18 +13,21 @@ import java.util.Optional;
  */
 public class Command {
   private final CommandType type;
-  private final String parameter;
+  private final String parameterA;
+  private final String parameterB;
   
   /**
    * Default constructor
    *
    * @implNote instanced of commands can be initialized only using the {@link #initialize(String)} method
    * @param type command type
-   * @param parameter command parameter
+   * @param parameterA command parameter
+   * @param parameterB
    */
-  private Command(@NotNull CommandType type, @NotNull String parameter) {
+  private Command(@NotNull CommandType type, @NotNull String parameterA, @NotNull String parameterB) {
     this.type = type;
-    this.parameter = parameter;
+    this.parameterA = parameterA;
+    this.parameterB = parameterB;
   }
   
   private static String normalizeString(@NotNull String input) {
@@ -51,7 +54,7 @@ public class Command {
     var data = parsed.get();
     
     // Materialize the data into a command
-    return Optional.of(new Command(data.getItem1(), data.getItem2().orElse("")));
+    return Optional.of(new Command(data.getItem1(), data.getItem2().orElse(""), data.getItem3().orElse("")));
   }
   
   /**
@@ -64,21 +67,34 @@ public class Command {
   }
   
   /**
-   * Getter for the parameter property
+   * Getter for the FirstParameter property
    *
    * @return the command parameter
    */
-  public String getParameter() {
-    return parameter;
+  public String getFirstParameter() {
+    return parameterA;
+  }
+  
+  public String getSecondParameter() {
+    return parameterB;
   }
   
   /**
-   * Validates whether this instance has a parameter
+   * Validates whether this instance has the first parameter
    *
-   * @return true if the command has a parameter
+   * @return true if the command has the first parameter
    */
-  public boolean hasNoParameter() {
-    return (parameter.length() == 0);
+  public boolean hasNoFirstParameter() {
+    return parameterA.length() == 0;
+  }
+  
+  /**
+   * Validates whether this instance has the second parameter
+   *
+   * @return true if the command has the second parameter
+   */
+  public boolean hasNoSecondParameter() {
+    return parameterB.length() == 0;
   }
 }
 

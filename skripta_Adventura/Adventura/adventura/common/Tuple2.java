@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Denis Akopyan
  * @version 1.0
  */
-public class Tuple<T1, T2> {
+public class Tuple2<T1, T2> {
   private final T1 item1;
   private final T2 item2;
   
@@ -21,7 +21,7 @@ public class Tuple<T1, T2> {
    * @param item1 value of the first item
    * @param item2 value of the second item
    */
-  public Tuple(@NotNull final T1 item1, @NotNull final T2 item2) {
+  public Tuple2(@NotNull final T1 item1, @NotNull final T2 item2) {
     this.item1 = item1;
     this.item2 = item2;
   }
