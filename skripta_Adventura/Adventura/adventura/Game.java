@@ -73,12 +73,12 @@ public final class Game {
     
     var corridorNote = new Note("Note", "(|paper(\\s+|-))(note)", "\"ERTkdfgkhUI*#5fsGO TO?<85Tudy =r00m///8\"\n");
     var studyRoomKey = new Key("key", 1, "a key");
-    var bossRoomBlueKey = new Key("key", "((myster(y|ious)\\s+)key)", 2, "mysterious key");
+    var bossRoomBlueKey = new Key("key", "((myster(y|ious)\\s+|)key)", 2, "mysterious key");
     var chocolateSquares = new Consumable("chocolate", "choco(|late)", "a delicious bar of chocolate");
     var chocolatePrison = new Consumable("chocolate", "choco(|late)", "a delicious bar of chocolate");
-    var smallBox = new ItemContainer("Small box", "small(\\s+box)", "a small floating box");
-    var mediumBox = new ItemContainer("Medium box", "medium(\\s+box)", "a medium floating box");
-    var largeBox = new ItemContainer("Large box", "large(\\s+box)", "a large floating box");
+    var smallBox = new ItemContainer("Small box", "small(|\\s+box)", "a small floating box");
+    var mediumBox = new ItemContainer("Medium box", "medium(|\\s+box)", "a medium floating box");
+    var largeBox = new ItemContainer("Large box", "large(|\\s+box)", "a large floating box");
     
     var yellowKey = new Key("yellow key", "yellow(|\\s+key)", 69, "a mysterious yellow key");
     var greenKey = new Key("green key", "green(|\\s+key)", 34, "a mysterious green key");
