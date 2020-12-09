@@ -77,17 +77,14 @@ public class Room extends ItemContainer {
    */
   @Override
   public String getDescription() {
-    return "You are in "
-    + ConsoleEngine
+    return ConsoleEngine
         .getInstance()
         .formatForegroundStyleCode(TextStyle.Underline)
     + super.getDescription()
     + ConsoleEngine
         .getInstance()
         .formatForegroundStyleCode(TextStyle.Normal)
-    + ".\n"
-    + (discovered ? "" : firstEntryDescription + "\n")
-    + getRoomNames();
+    + (discovered ? "" : "\n" + firstEntryDescription);
   }
   
   /**
@@ -97,7 +94,7 @@ public class Room extends ItemContainer {
    */
   public String getRoomNames() {
     return rooms.size() != 0
-      ? "From here you can go to: " + rooms.stream().map(room -> room.getDisplayName().toLowerCase()).collect(Collectors.joining(", "))
+      ? "From here you can go to: " + rooms.stream().map(room -> room.getDisplayName().toLowerCase()).sorted().collect(Collectors.joining(", "))
       : "";
   }
   

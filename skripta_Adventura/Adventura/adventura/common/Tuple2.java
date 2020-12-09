@@ -16,17 +16,6 @@ public class Tuple2<T1, T2> {
   private final T2 item2;
   
   /**
-   * Default constructor
-   *
-   * @param item1 value of the first item
-   * @param item2 value of the second item
-   */
-  public Tuple2(@NotNull final T1 item1, @NotNull final T2 item2) {
-    this.item1 = item1;
-    this.item2 = item2;
-  }
-  
-  /**
    * Getter for the first item property
    *
    * @return the value of the first item
@@ -42,5 +31,16 @@ public class Tuple2<T1, T2> {
    */
   public final T2 getItem2() {
     return item2;
+  }
+  
+  /**
+   * Default constructor
+   *
+   * @param item1 value of the first item
+   * @param item2 value of the second item
+   */
+  public Tuple2(@NotNull final T1 item1, @NotNull final T2 item2) {
+    this.item1 = item1;
+    this.item2 = item2;
   }
 }

@@ -26,6 +26,7 @@ public final class Game {
   private Room currentRoom;
   private Room winRoom;
   private int lives = 3;
+  private final static String roomDesc = "You are in ";
   private final ItemContainer pocket = new ItemContainer("my backpack",
       "(my(\\s+))|(backpack)",
       "A backpack, very handy when it comes to carrying items");
@@ -71,7 +72,7 @@ public final class Game {
   private void initializeRooms() {
     // --- Initialize items -----------------------------------------------------------------------------
     
-    var corridorNote = new Note("Note", "(|paper(\\s+|-))(note)", "\"ERTkdfgkhUI*#5fsGO TO?<85Tudy =r00m///8\"\n");
+    var corridorNote = new Note("paper-note", "(|paper(\\s+|-))(note)", "\"ERTkdfgkhUI*#5fsGO TO?<85Tudy =r00m///8\"");
     var studyRoomKey = new Key("key", 1, "a key");
     var bossRoomBlueKey = new Key("key", "((myster(y|ious)\\s+|)key)", 2, "mysterious key");
     var chocolateSquares = new Consumable("chocolate", "choco(|late)", "a delicious bar of chocolate");
@@ -98,7 +99,7 @@ public final class Game {
     
     // --- Initialize rooms -------------------------------------------------------------------------------
     
-    var bedroom = new Room("Bedroom", "your bedroom", "");
+    var bedroom = new Room("Bedroom", roomDesc + "your bedroom", "");
     var kitchen = new WinRoom("Kitchen",
         "kitchen",
         new ArrayList<>() {
@@ -113,17 +114,17 @@ public final class Game {
             + "blue, green, yellow"
             + ConsoleEngine.getInstance().formatForegroundStyleCode(TextStyle.Normal));
     var corridor = new Room("Corridor",
-        "the corridor that joins multiple rooms of the house together",
+        roomDesc + "the corridor that joins multiple rooms of the house together.",
         "You notice a paper-note lying on the floor.");
     var livingRoom = new Room("Living room",
         "(living)((\\s+room)|)",
         "The living room is silent with nobody around.",
         "You notice a key on the coffee table.");
-    var studyRoom = new Room("Study room",
+    var studyRoom = new Room("Study",
         "(study)((\\s+room)|)",
-        "the study",
-        "Books are scattered all over the place and where once stood a mighty bookshelf now is a wall with three silhouettes of doors.\n\n" +
-            "Each of a different color - blue, green, yellow.\n\n" +
+        roomDesc + "the study.",
+        "Books are scattered all over the place and where once stood a mighty bookshelf now is a wall with three silhouettes of doors.\n" +
+            "Each of a different color - blue, green, yellow.\n" +
             "Only the blue one had a handle drawn, while the others were missing it.",
         1,
         "It seems that the study is locked");
@@ -132,9 +133,9 @@ public final class Game {
         "(blue)((\\s+room)|)",
         "You are inside the mysterious blue room. Numbers are written on every wall.",
         "");
-    var squaresRoom = new Room("Squares",
+    var squaresRoom = new Room("Square room",
         "(square(s|))((\\s+room)|)",
-        "You are in a room full of square shapes floating in the air, some are combined into boxes, three to be exact\nEach box is of a different size - small, medium and large",
+        roomDesc + " a room full of square shapes floating in the air, some are combined into boxes, three to be exact\nEach box is of a different size - small, medium and large",
         "");
     var bossRoom1 = new BattleRoom("Mystery room",
         "(mystery)((\\s+room)|)",
@@ -299,13 +300,13 @@ public final class Game {
     
     // Process the command based on its category
     return switch (extracted.getType()) {
-      case Help -> manual(extracted);
-      case Carry -> carry(extracted);
-      case Goto -> go(extracted);
-      case Unlock -> unlock(extracted);
-      case Where -> where();
-      case Examine -> examine(extracted);
-      case Eat -> eat(extracted);
+      case Help -> addExists(manual(extracted));
+      case Carry -> addExists(carry(extracted));
+      case Goto -> addExists(go(extracted));
+      case Unlock -> addExists(unlock(extracted));
+      case Where -> addExists(where());
+      case Examine -> addExists(examine(extracted));
+      case Eat -> addExists(eat(extracted));
       case End -> end();
     };
   }
@@ -326,6 +327,10 @@ public final class Game {
    */
   public String getRoomExists() {
     return currentRoom.getRoomNames();
+  }
+  
+  private String addExists(String message) {
+    return message + '\n' + currentRoom.getRoomNames();
   }
   
   // --- Commands ------------------------------------------------------------------------------------------------------
@@ -475,11 +480,16 @@ public final class Game {
       var size = container.getItems().size();
       
       return "You take a look inside the "
-          + container.getDisplayName()
+          + container.getDisplayName().toLowerCase()
           + ". "
           + (size == 0
           ? "It is empty."
           : "Inside you find" + (size > 1 ? " " : " a ") + container.itemNames());
+    }
+    else if (extracted instanceof Note) {
+      return "You pick up the " + extracted.getDisplayName().toLowerCase() + " and read what it says:\n"
+          + extracted.getDescription() + "\n"
+          + "You put the " + extracted.getDisplayName().toLowerCase() + " back to where you've found it";
     }
     
     // Get the item description
@@ -536,8 +546,13 @@ public final class Game {
       for (var key : keys)
         // Try to unlock the container with it
         if (item.get().unlock(key))
+        {
+          pocket.takeOut(key.getDisplayName());
+  
           // notify the user
-          return name + " is now open";
+          return "You've unlocked the " + name;
+        }
+  
     }
     // Otherwise..
     else {
@@ -558,7 +573,7 @@ public final class Game {
           // If the room was unlocked..
           if (winRoom.unlock(keys))
             // notify the user
-            return name + " is now open";
+            return "You've unlocked the " + name;
             // Otherwise
           else
             // notify the user
@@ -570,8 +585,12 @@ public final class Game {
           for (var key : keys)
             // Try to unlock the room with it
             if (roomElement.unlock(key))
+            {
+              pocket.takeOut(key.getDisplayName());
+  
               // notify the user
-              return name + " is now open";
+              return "You've unlocked the " + name;
+            }
       }
     }
     
