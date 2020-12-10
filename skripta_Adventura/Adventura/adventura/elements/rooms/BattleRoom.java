@@ -69,6 +69,7 @@ public class BattleRoom extends Room {
       parameters.add(numberGenerator.nextInt(50));
     
     // Materialize the result
+    // TODO: Java cannot format a list of params....
     return new Tuple2<>(String.format(problemFormat, parameters), problemGenerator.apply(parameters));
   }
 }

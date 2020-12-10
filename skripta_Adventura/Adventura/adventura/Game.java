@@ -225,7 +225,10 @@ public final class Game {
    * @return returns false is the player has died
    */
   public boolean removeLives() {
-    return --lives != 0;
+    var isAlive = --lives != 0;
+    if (!isAlive)
+      gameOver = true;
+    return isAlive;
   }
   
   /**

@@ -3,9 +3,9 @@ import console.Color;
 import console.ConsoleEngine;
 import console.TextStyle;
 import elements.rooms.BattleRoom;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+import java.util.Optional;
 
 /**
  * Class for running the game
@@ -67,7 +67,7 @@ public final class GameEngine {
   /**
    * Runs the game loop
    */
-  public void run() {
+  public void run() throws InterruptedException {
     drawHud();
     
     ConsoleEngine
@@ -91,13 +91,46 @@ public final class GameEngine {
       // Print the command result
       ConsoleEngine.getInstance().typeOutLn(output);
       
-      if (getGameInstance().getCurrentRoom() instanceof BattleRoom) {
-        var battleRoom = (BattleRoom)getGameInstance().getCurrentRoom();
-        var hits = 0;
-        while (hits < battleRoom.getRounds()) {
-        
-        }
+      if (getGameInstance().getCurrentRoom() instanceof BattleRoom)
+        runBattle();
+    }
+  }
+  
+  private void runBattle() throws InterruptedException {
+    var battleRoom = (BattleRoom) getGameInstance().getCurrentRoom();
+    var hits = 0;
+    while (hits < battleRoom.getRounds()) {
+      // Draw the game HUD
+      drawHud();
+      
+      var problem = battleRoom.generateProblem();
+      var attack = ConsoleEngine
+          .getInstance()
+          .println(problem.getItem1())
+          .getInput(10);
+      
+      if (attack.isEmpty()) {
+        if (game.removeLives())
+          continue;
+        break;
       }
+      
+      var answer = TryParse(attack.get());
+      if ((answer.isEmpty() || !answer.get().equals(problem.getItem2()))) {
+        if (game.removeLives())
+          continue;
+        break;
+      }
+      
+      ++hits;
+    }
+  }
+  
+  private static Optional<Integer> TryParse(@NotNull String value) {
+    try {
+      return Optional.of(Integer.valueOf(value));
+    } catch (NumberFormatException x) {
+      return Optional.empty();
     }
   }
 }
