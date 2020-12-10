@@ -8,6 +8,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Function;
 
+/**
+ * Room with a battle sequence
+ *
+ * @author Denis Akopyan
+ */
 public class BattleRoom extends Room {
   private static final Random numberGenerator = new Random();
   private final Function<List<Integer>, Integer> problemGenerator;

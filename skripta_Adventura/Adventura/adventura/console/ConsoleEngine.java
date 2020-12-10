@@ -3,6 +3,12 @@ package console;
 import common.Tuple2;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.util.Optional;
+import java.util.concurrent.*;
 import java.util.function.Consumer;
 
 /**
@@ -198,5 +204,51 @@ public class ConsoleEngine {
    */
   public ConsoleEngine println(@NotNull String input) {
     return print(input, System.out::println);
+  }
+  
+  /**
+   * Retrieves user-input from the terminal
+   *
+   * @return user-provided input
+   */
+  public String getInput() {
+    setStyle(Color.Blue)
+        .print("> ")
+        .setDefaultStyle();
+  
+    var input = new BufferedReader(new InputStreamReader(System.in));
+    try {
+      return input.readLine();
+    } catch (java.io.IOException exc) {
+      System.out.println("Failed to read input: " + exc.getMessage());
+      
+      return "";
+    }
+  }
+  
+  /**
+   * Retrieves user-input from the terminal with a timeout
+   * @param timeout time limit for user input
+   * @return user-provided input
+   */
+  public Optional<String> getInput(int timeout) throws InterruptedException {
+    var ex = Executors.newSingleThreadExecutor();
+    Optional<String> input = Optional.empty();
+    
+    try {
+      var result = ex.submit(new ConsoleInputTask());
+      
+      try {
+        input = Optional.ofNullable(result.get(timeout, TimeUnit.SECONDS));
+      } catch (ExecutionException e) {
+        e.getCause().printStackTrace();
+      } catch (TimeoutException e) {
+        result.cancel(true);
+      }
+    } finally {
+      ex.shutdownNow();
+    }
+    
+    return input;
   }
 }

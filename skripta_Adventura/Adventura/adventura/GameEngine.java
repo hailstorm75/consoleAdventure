@@ -2,6 +2,7 @@ import command.Command;
 import console.Color;
 import console.ConsoleEngine;
 import console.TextStyle;
+import elements.rooms.BattleRoom;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -59,7 +60,7 @@ public final class GameEngine {
         .setDefaultStyle()
         .print(game.getPocket().getItems().size() + "")
         .print("\n");
-
+    
     System.out.println();
   }
   
@@ -68,50 +69,35 @@ public final class GameEngine {
    */
   public void run() {
     drawHud();
-  
+    
     ConsoleEngine
         .getInstance()
         .setStyle(Color.Yellow)
         .typeOutLn(game.getIntroduction())
         .setDefaultStyle()
         .println(game.getRoomExists());
-  
+    
     // Until the game is over..
     while (!game.isGameOver()) {
       // Get the user-input
-      var input = getInput();
+      var input = ConsoleEngine.getInstance().getInput();
       // Compose the input into a command
       var command = Command.initialize(input);
-  
+      
       // Process the command and get result
       var output = game.processStep(command);
       // Draw the game HUD
       drawHud();
       // Print the command result
       ConsoleEngine.getInstance().typeOutLn(output);
-    }
-  }
-  
-  /**
-   * Retrieves user-input from the terminal
-   *
-   * @return user-provided input
-   */
-  private String getInput() {
-    ConsoleEngine
-        .getInstance()
-        .setStyle(Color.Blue)
-        .print("> ")
-        .setDefaultStyle();
-    
-    var input = new BufferedReader(new InputStreamReader(System.in));
-    try {
-      return input.readLine();
-    }
-    catch (java.io.IOException exc) {
-      System.out.println("Failed to read input: " + exc.getMessage());
       
-      return "";
+      if (getGameInstance().getCurrentRoom() instanceof BattleRoom) {
+        var battleRoom = (BattleRoom)getGameInstance().getCurrentRoom();
+        var hits = 0;
+        while (hits < battleRoom.getRounds()) {
+        
+        }
+      }
     }
   }
 }

@@ -62,7 +62,7 @@ class GameEngineTest {
     
     assertFalse(game.isGameOver());
     
-    assertEquals("Study room", game.getCurrentRoom().getDisplayName());
+    assertEquals("Study", game.getCurrentRoom().getDisplayName());
     game.processStep(Command.initialize("enter blue room"));
     
     assertFalse(game.isGameOver());
@@ -72,7 +72,7 @@ class GameEngineTest {
     
     assertFalse(game.isGameOver());
     
-    assertEquals("Squares", game.getCurrentRoom().getDisplayName());
+    assertEquals("Square room", game.getCurrentRoom().getDisplayName());
     assertEquals(0, game.getPocket().getItems().size());
     
     game
@@ -82,7 +82,7 @@ class GameEngineTest {
         .filter(item -> item instanceof ItemContainer)
         .map(item -> (ItemContainer) item)
         .filter(itemContainer -> itemContainer.getItems().size() != 0)
-        .map(itemContainer -> new Tuple2<>(itemContainer.getDisplayName(), itemContainer.getItems().stream().findFirst().get()))
+        .map(itemContainer -> new Tuple2<>(itemContainer.getDisplayName(), itemContainer.getItems().stream().findFirst().get().getDisplayName()))
         .forEach(item -> game.processStep(Command.initialize("take " + item.getItem2() + " from " + item.getItem1())));
     
     assertEquals(2, game.getPocket().getItems().size());
@@ -297,57 +297,58 @@ class GameEngineTest {
     // Step 1
     assertEquals("You are in the corridor that joins multiple rooms of the house together.\n" +
             "You notice a paper-note lying on the floor.\n" +
-            "From here you can go to: bedroom, kitchen, study, living room",
+            "From here you can go to: bedroom, kitchen, living room, study",
         removeStylingChars(game.processStep(Command.initialize("go to the corridor"))));
     
     // Step 2
     assertEquals("You pick up the paper-note and read what it says:\n" +
             "\"ERTkdfgkhUI*#5fsGO TO?<85Tudy =r00m///8\"\n" +
-            "You put paper-note back to where you've found it\n" +
-            "From here you can go to: bedroom, kitchen, study, living room",
+            "You put the paper-note back to where you've found it\n" +
+            "From here you can go to: bedroom, kitchen, living room, study",
         removeStylingChars(game.processStep(Command.initialize("examine the note"))));
     
     // Step 3
     assertEquals("It seems that the kitchen is locked by three mysterious padlocks, each of a different color - blue, green, yellow\n" +
-            "From here you can go to: bedroom, kitchen, study, living room",
+            "From here you can go to: bedroom, kitchen, living room, study",
         removeStylingChars(game.processStep(Command.initialize("head to kitchen"))));
     
     // Step 4
     assertEquals("It seems that the study is locked\n" +
-            "From here you can go to: bedroom, kitchen, study, living room",
+            "From here you can go to: bedroom, kitchen, living room, study",
         removeStylingChars(game.processStep(Command.initialize("enter study"))));
     
     // Step 5
-    assertEquals("The living room is silent with nobody around. You notice a key on the coffee table.\n" +
+    assertEquals("The living room is silent with nobody around.\nYou notice a key on the coffee table.\n" +
             "From here you can go to: corridor",
         removeStylingChars(game.processStep(Command.initialize("go to the living room"))));
     
     // Step 6
-    assertEquals("You take key and put in inside your pocket\n" +
+    assertEquals("You take the key and put in inside your pocket\n" +
             "From here you can go to: corridor",
         removeStylingChars(game.processStep(Command.initialize("take the key"))));
     
     // Step 7
     assertEquals("You are in the corridor that joins multiple rooms of the house together.\n" +
-            "From here you can go to: bedroom, kitchen, study, living room",
+            "From here you can go to: bedroom, kitchen, living room, study",
         removeStylingChars(game.processStep(Command.initialize("go to corridor"))));
     
     // Step 8
-    assertEquals("You've unlocked the study room\n" +
-            "From here you can go to: bedroom, kitchen, study, living room",
+    assertEquals("You've unlocked the study\n" +
+            "From here you can go to: bedroom, kitchen, living room, study",
         removeStylingChars(game.processStep(Command.initialize("unlock study"))));
     
     // Step 9
-    assertEquals("You are in the study. Books are scattered all over the place and where once stood a mighty bookshelf now is a wall with three silhouettes of doors.\n" +
+    assertEquals("You are in the study.\n" +
+            "Books are scattered all over the place and where once stood a mighty bookshelf now is a wall with three silhouettes of doors.\n" +
             "Each of a different color - blue, green, yellow.\n" +
             "Only the blue one had a handle drawn, while the others were missing it.\n" +
-            "From here you can go to: blue room, green room, yellow room, corridor",
+            "From here you can go to: blue room, corridor, green room, yellow room",
         removeStylingChars(game.processStep(Command.initialize("enter study"))));
     
     // Step 10
     assertEquals("Upon entering you hear the door slam shut behind your back\n" +
             "You are inside the mysterious blue room. Numbers are written on every wall.\n" +
-            "From here you can go to: study, square room, mystery room",
+            "From here you can go to: mystery room, square room, study",
         removeStylingChars(game.processStep(Command.initialize("enter blue room"))));
     
     // Step 11
@@ -554,7 +555,7 @@ class GameEngineTest {
     
     // Step 45
     assertEquals("You are in the study. Books are scattered all over the place and where once stood a mighty bookshelf now is a wall with three silhouettes of doors.\n" +
-            "From here you can go to: blue room, green room, yellow room, corridor",
+            "From here you can go to: blue room, corridor, green room, yellow room",
         removeStylingChars(game.processStep(Command.initialize("go to the study"))));
     
     // Step 46
@@ -602,17 +603,17 @@ class GameEngineTest {
     
     // Step 53
     assertEquals("You are in the study. Books are scattered all over the place and where once stood a mighty bookshelf now is a wall with three silhouettes of doors.\n" +
-            "From here you can go to: blue room, green room, yellow room, corridor",
+            "From here you can go to: blue room, corridor, green room, yellow room",
         removeStylingChars(game.processStep(Command.initialize("go to study"))));
     
     // Step 54
     assertEquals("You are in the corridor that joins multiple rooms of the house together.\n" +
-            "From here you can go to: bedroom, kitchen, study, living room",
+            "From here you can go to: bedroom, kitchen, living room, study",
         removeStylingChars(game.processStep(Command.initialize("go to corridor"))));
     
     // Step 55
     assertEquals("You've unlocked the kitchen\n" +
-            "From here you can go to: bedroom, kitchen, study, living room",
+            "From here you can go to: bedroom, kitchen, living room, study",
         removeStylingChars(game.processStep(Command.initialize("unlock kitchen"))));
     
     // Step 56
