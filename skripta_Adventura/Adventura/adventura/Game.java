@@ -1,5 +1,6 @@
 import command.Command;
 import command.CommandsRepository;
+import common.GameBattle;
 import console.ConsoleEngine;
 import console.TextStyle;
 import elements.*;
@@ -30,6 +31,12 @@ public final class Game {
   private final ItemContainer pocket = new ItemContainer("my backpack",
       "(my(\\s+))|(backpack)",
       "A backpack, very handy when it comes to carrying items");
+  
+  public Optional<GameBattle> getBattle() {
+    return currentRoom instanceof BattleRoom
+      ? Optional.of(((BattleRoom) currentRoom).getBattle())
+      : Optional.empty();
+  }
   
   /**
    * Getter for the CurrentRoom property
@@ -129,23 +136,26 @@ public final class Game {
         1,
         "It seems that the study is locked");
     
-    var blueRoom = new Room("Blue room",
-        "(blue)((\\s+room)|)",
-        "You are inside the mysterious blue room. Numbers are written on every wall.",
-        "");
-    var squaresRoom = new Room("Square room",
-        "(square(s|))((\\s+room)|)",
-        roomDesc + " a room full of square shapes floating in the air, some are combined into boxes, three to be exact\nEach box is of a different size - small, medium and large",
-        "");
     var bossRoom1 = new BattleRoom("Mystery room",
         "(mystery)((\\s+room)|)",
         "You are inside the mystery room. Darkness. Nothing to see.",
         "You feel something watching you\n" +
             "Suddenly, you are hit by a sharp plus sign\n" +
             "A monster appears!",
-        new BattleArguments(3, 3, "%d + %d - %d", generator -> generator.get(0) + generator.get(1) - generator.get(2)),
+        this::removeLives,
+        new GameBattle(3, 3, "%d + %d - %d", generator -> generator.get(0) + generator.get(1) - generator.get(2)),
         2,
         "The door to the mystery room is locked. Probably needs a key.");
+    var blueRoom = new AutoLockRoom("Blue room",
+        "(blue)((\\s+room)|)",
+        "You are inside the mysterious blue room. Numbers are written on every wall.",
+        "Upon entering you hear the door slam shut behind your back",
+        "The door won't budge",
+        bossRoom1::isDefeated);
+    var squaresRoom = new Room("Square room",
+        "(square(s|))((\\s+room)|)",
+        roomDesc + "a room full of square shapes floating in the air, some are combined into boxes, three to be exact\nEach box is of a different size - small, medium and large",
+        "");
     
     var greenRoom = new Room("Green room",
         "(green)((\\s+room)|)",
@@ -167,7 +177,8 @@ public final class Game {
         "(mystery)((\\s+room)|)",
         "",
         "",
-        new BattleArguments(4, 2, "%d * %d", generator -> generator.get(0) * generator.get(1)),
+        null,
+        new GameBattle(4, 2, "%d * %d", generator -> generator.get(0) * generator.get(1)),
         666666,
         "");
     
@@ -183,7 +194,8 @@ public final class Game {
         "(mystery)((\\s+room)|)",
         "",
         "",
-        new BattleArguments(5, 3, "%d * %d + %d", generator -> generator.get(0) * generator.get(1) + generator.get(2)),
+        null,
+        new GameBattle(5, 3, "%d * %d + %d", generator -> generator.get(0) * generator.get(1) + generator.get(2)),
         666666,
         "");
     
@@ -305,7 +317,7 @@ public final class Game {
     return switch (extracted.getType()) {
       case Help -> addExists(manual(extracted));
       case Carry -> addExists(carry(extracted));
-      case Goto -> addExists(go(extracted));
+      case Goto -> go(extracted);
       case Unlock -> addExists(unlock(extracted));
       case Where -> addExists(where());
       case Examine -> addExists(examine(extracted));
@@ -408,14 +420,14 @@ public final class Game {
       pocket.add(item.get());
       
       // Notify the user
-      return "You take the " + item.get().getDisplayName() + " and put in inside your pocket";
+      return "You take the " + item.get().getDisplayName() + " and put it inside your pocket";
     }
     
     var container = currentRoom
         .getItems()
         .stream()
         .filter(item -> item instanceof ItemContainer)
-        .map(item -> (ItemContainer)item)
+        .map(item -> (ItemContainer) item)
         .filter(c -> c.isMatch(command.getSecondParameter()))
         .findFirst();
     
@@ -429,8 +441,8 @@ public final class Game {
       return "There is no such item inside " + command.getSecondParameter();
     
     pocket.add(item.get());
-  
-    return "You take the " + item.get().getDisplayName() + " and put in inside your pocket";
+    
+    return "You take the " + item.get().getDisplayName() + " and put it inside your pocket";
   }
   
   /**
@@ -488,8 +500,7 @@ public final class Game {
           + (size == 0
           ? "It is empty."
           : "Inside you find" + (size > 1 ? " " : " a ") + container.itemNames());
-    }
-    else if (extracted instanceof Note) {
+    } else if (extracted instanceof Note) {
       return "You pick up the " + extracted.getDisplayName().toLowerCase() + " and read what it says:\n"
           + extracted.getDescription() + "\n"
           + "You put the " + extracted.getDisplayName().toLowerCase() + " back to where you've found it";
@@ -548,14 +559,13 @@ public final class Game {
       // For every key..
       for (var key : keys)
         // Try to unlock the container with it
-        if (item.get().unlock(key))
-        {
+        if (item.get().unlock(key)) {
           pocket.takeOut(key.getDisplayName());
-  
+          
           // notify the user
           return "You've unlocked the " + name;
         }
-  
+      
     }
     // Otherwise..
     else {
@@ -587,10 +597,9 @@ public final class Game {
           // For every key..
           for (var key : keys)
             // Try to unlock the room with it
-            if (roomElement.unlock(key))
-            {
+            if (roomElement.unlock(key)) {
               pocket.takeOut(key.getDisplayName());
-  
+              
               // notify the user
               return "You've unlocked the " + name;
             }
@@ -621,7 +630,7 @@ public final class Game {
     // If the command is missing the parameter..
     if (command.hasNoFirstParameter())
       // ask the user to specify it
-      return "Where to? Specify the room name";
+      return addExists("Where to? Specify the room name");
     
     // Get the specified room name
     var room = command.getFirstParameter();
@@ -645,7 +654,7 @@ public final class Game {
     if (extracted.isLocked())
       // get the room locked message
       //noinspection OptionalGetWithoutIsPresent
-      return extracted.getLockedMessage().get();
+      return addExists(extracted.getLockedMessage().get());
     
     // Set the next room as the current
     currentRoom = extracted;
@@ -654,7 +663,9 @@ public final class Game {
     var description = currentRoom.getDescription();
     // Mark the room as discovered
     currentRoom.discover();
-    
-    return description;
+  
+    return currentRoom instanceof BattleRoom
+      ? description
+      : addExists(description);
   }
 }

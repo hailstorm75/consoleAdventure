@@ -1,8 +1,8 @@
 import command.Command;
+import common.GameBattle;
 import console.Color;
 import console.ConsoleEngine;
 import console.TextStyle;
-import elements.rooms.BattleRoom;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -91,38 +91,36 @@ public final class GameEngine {
       // Print the command result
       ConsoleEngine.getInstance().typeOutLn(output);
       
-      if (getGameInstance().getCurrentRoom() instanceof BattleRoom)
-        runBattle();
+      var battle = getGameInstance().getBattle();
+      if (battle.isPresent())
+        runBattle(battle.get());
     }
   }
   
-  private void runBattle() throws InterruptedException {
-    var battleRoom = (BattleRoom) getGameInstance().getCurrentRoom();
-    var hits = 0;
-    while (hits < battleRoom.getRounds()) {
+  private void runBattle(GameBattle battle) throws InterruptedException {
+    while (!battle.isDefeated()) {
       // Draw the game HUD
       drawHud();
-      
-      var problem = battleRoom.generateProblem();
+
+      var problem = battle.nextAttack();
       var attack = ConsoleEngine
           .getInstance()
-          .println(problem.getItem1())
+          .print("> ")
+          .println(problem)
           .getInput(10);
-      
+
       if (attack.isEmpty()) {
         if (game.removeLives())
           continue;
         break;
       }
-      
+
       var answer = TryParse(attack.get());
-      if ((answer.isEmpty() || !answer.get().equals(problem.getItem2()))) {
+      if ((answer.isEmpty() || !battle.defend(answer.get()))) {
         if (game.removeLives())
           continue;
         break;
       }
-      
-      ++hits;
     }
   }
   

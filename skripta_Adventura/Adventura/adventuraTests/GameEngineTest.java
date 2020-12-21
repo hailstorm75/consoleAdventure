@@ -103,18 +103,11 @@ class GameEngineTest {
     
     assertFalse(game.isGameOver());
     
-    assertEquals(4, game.getLives());
     assertEquals("Mystery room", game.getCurrentRoom().getDisplayName());
     assertEquals(3, game.getLives());
-    
-    for (int i = 0; i < 3; i++) {
-      // TODO: Get generated math problem with addition
-      
-      // TODO: Calculate correct result
-      
-      // TODO: Feed result to battleProcessor
-    }
-    
+  
+    assertBattle(game, 3);
+  
     assertEquals(0, game.getPocket().getItems().size());
     game.processStep(Command.initialize("take blue key"));
     assertEquals(1, game.getPocket().getItems().size());
@@ -191,15 +184,9 @@ class GameEngineTest {
     assertFalse(game.isGameOver());
     
     assertEquals("Mystery room", game.getCurrentRoom().getDisplayName());
-    
-    for (int i = 0; i < 4; i++) {
-      // TODO: Get generated math problem with multiplication
-      
-      // TODO: Calculate correct result
-      
-      // TODO: Feed result to battleProcessor
-    }
-    
+  
+    assertBattle(game, 4);
+  
     assertEquals(game.getPocket().getItems().size(), 1);
     game.processStep(Command.initialize("take green key"));
     assertEquals(game.getPocket().getItems().size(), 2);
@@ -238,14 +225,8 @@ class GameEngineTest {
     assertFalse(game.isGameOver());
     
     assertEquals("Mystery room", game.getCurrentRoom().getDisplayName());
-    
-    for (int i = 0; i < 5; i++) {
-      // TODO: Get generated math problem with multiplication and addition
-      
-      // TODO: Calculate correct result
-      
-      // TODO: Feed result to battleProcessor
-    }
+  
+    assertBattle(game, 5);
   
     assertEquals(2, game.getPocket().getItems().size());
     game.processStep(Command.initialize("take yellow key"));
@@ -276,6 +257,24 @@ class GameEngineTest {
     game.processStep(Command.initialize("enter kitchen"));
     
     assertTrue(game.isGameOver());
+  }
+  
+  private static void assertBattle(Game game, int rounds) {
+    var battle = game.getBattle();
+    assertTrue(battle.isPresent());
+    
+    var battleUnwrapped = battle.get();
+    assertFalse(battleUnwrapped.isDefeated());
+    
+    for (int i = 0; i < rounds; i++) {
+      battleUnwrapped.nextAttack();
+      
+      var defence = battleUnwrapped.getCurrentSolution();
+      
+      assertTrue(battleUnwrapped.defend(defence));
+    }
+    
+    assertTrue(battleUnwrapped.isDefeated());
   }
   
   private static String removeStylingChars(@NotNull String string) {
@@ -323,7 +322,7 @@ class GameEngineTest {
         removeStylingChars(game.processStep(Command.initialize("go to the living room"))));
     
     // Step 6
-    assertEquals("You take the key and put in inside your pocket\n" +
+    assertEquals("You take the key and put it inside your pocket\n" +
             "From here you can go to: corridor",
         removeStylingChars(game.processStep(Command.initialize("take the key"))));
     
@@ -353,7 +352,7 @@ class GameEngineTest {
     
     // Step 11
     assertEquals("The door to the mystery room is locked. Probably needs a key.\n" +
-            "From here you can go to: study, square room, mystery room",
+            "From here you can go to: mystery room, square room, study",
         removeStylingChars(game.processStep(Command.initialize("enter mystery room"))));
     
     // Step 12
@@ -378,21 +377,21 @@ class GameEngineTest {
         assertEquals("You take a look inside the " +
                 item.getItem1().toLowerCase() +
                 ". It is empty.\n" +
-                "From here you can go to: study, square room, mystery room",
+                "From here you can go to: blue room",
             removeStylingChars(game.processStep(Command.initialize("inspect " + item.getItem1()))));
       else {
-        assertEquals("You take a look at the " +
+        assertEquals("You take a look inside the " +
                 item.getItem1().toLowerCase() +
-                ". Inside you find a" +
+                ". Inside you find a " +
                 item.getItem2().get().getDisplayName().toLowerCase() +
-                ".\n" +
-                "From here you can go to: study, square room, mystery room",
+                "\n" +
+                "From here you can go to: blue room",
             removeStylingChars(game.processStep(Command.initialize("inspect " + item.getItem1()))));
   
-        assertEquals("You take the" +
+        assertEquals("You take the " +
                 item.getItem2().get().getDisplayName().toLowerCase() +
                 " and put it inside your pocket\n" +
-                "From here you can go to: study, square room, mystery room",
+                "From here you can go to: blue room",
             removeStylingChars(game.processStep(Command.initialize("take " + item.getItem2().get().getDisplayName() + " from " + item.getItem1()))));
       }
     }
@@ -400,12 +399,12 @@ class GameEngineTest {
     
     // Step 19
     assertEquals("You are inside the mysterious blue room. Numbers are written on every wall.\n" +
-            "From here you can go to: study, square room, mystery room",
+            "From here you can go to: mystery room, square room, study",
         removeStylingChars(game.processStep(Command.initialize("enter blue room"))));
     
     // Step 20
-    assertEquals("You are inside the mysterious blue room. Numbers are written on every wall.\n" +
-            "From here you can go to: study, square room, mystery room",
+    assertEquals("You've unlocked the mystery room\n" +
+            "From here you can go to: mystery room, square room, study",
         removeStylingChars(game.processStep(Command.initialize("unlock mystery room"))));
     
     // Step 21
@@ -415,10 +414,10 @@ class GameEngineTest {
             "A monster appears!",
         removeStylingChars(game.processStep(Command.initialize("go to the mystery room"))));
     
-    // Battle start -------------------------------------------------------------------
-    // TODO
-    // To beat the monster, the user must input the correct result to the randomly generated math problem
-    // This battle has problems using addition
+    // GameBattle start -------------------------------------------------------------------
+    
+    assertBattle(game, 3);
+
     // End start ----------------------------------------------------------------------
     
     // Step 22
@@ -527,10 +526,10 @@ class GameEngineTest {
             "A monster appears!",
         removeStylingChars(game.processStep(Command.initialize("enter mystery room"))));
     
-    // Battle start -------------------------------------------------------------------
-    // TODO
-    // To beat the monster, the user must input the correct result to the randomly generated math problem
-    // This battle has problems using multiplication
+    // GameBattle start -------------------------------------------------------------------
+    
+    assertBattle(game, 4);
+
     // End start ----------------------------------------------------------------------
     
     // Step 41
@@ -580,10 +579,10 @@ class GameEngineTest {
             "From here you can go to: yellow room, mystery room",
         removeStylingChars(game.processStep(Command.initialize("enter mystery room"))));
     
-    // Battle start -------------------------------------------------------------------
-    // TODO
-    // To beat the monster, the user must input the correct result to the randomly generated math problem
-    // This battle has problems using multiplication and addition
+    // GameBattle start -------------------------------------------------------------------
+    
+    assertBattle(game, 5);
+
     // End start ----------------------------------------------------------------------
     
     // Step 50

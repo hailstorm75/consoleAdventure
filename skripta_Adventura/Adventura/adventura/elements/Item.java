@@ -40,6 +40,10 @@ public class Item {
    * @return description of the items container
    */
   public String getDescription() {
+    return getDescriptionFinal();
+  }
+  
+  protected final String getDescriptionFinal() {
     return description;
   }
   

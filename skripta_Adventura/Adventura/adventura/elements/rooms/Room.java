@@ -19,6 +19,12 @@ public class Room extends ItemContainer {
   private final String firstEntryDescription;
   private boolean discovered;
   
+  protected String getFirstEntryDescription() {
+    return firstEntryDescription;
+  }
+  
+  protected boolean isDiscovered() { return discovered; }
+  
   /**
    * Default constructor
    *
@@ -84,7 +90,7 @@ public class Room extends ItemContainer {
     + ConsoleEngine
         .getInstance()
         .formatForegroundStyleCode(TextStyle.Normal)
-    + (discovered ? "" : "\n" + firstEntryDescription);
+    + (discovered || firstEntryDescription.equals("") ? "" : "\n" + firstEntryDescription);
   }
   
   /**
