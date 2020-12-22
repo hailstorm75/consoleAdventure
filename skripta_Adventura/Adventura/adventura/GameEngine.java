@@ -105,8 +105,8 @@ public final class GameEngine {
       var problem = battle.nextAttack();
       var attack = ConsoleEngine
           .getInstance()
-          .print("> ")
           .println(problem)
+          .print("> ")
           .getInput(10);
 
       if (attack.isEmpty()) {

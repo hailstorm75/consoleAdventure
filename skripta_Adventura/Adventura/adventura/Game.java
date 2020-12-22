@@ -92,6 +92,9 @@ public final class Game {
     var greenKey = new Key("green key", "green(|\\s+key)", 34, "a mysterious green key");
     var blueKey = new Key("blue key", "blue(|\\s+key)", 42, "a mysterious blue key");
     
+    var greenCharcoal = new Key("green charcoal", "green(|\\s+charcoal)", 55, "a bright green stick of charcoal");
+    var yellowCharcoal = new Key("yellow charcoal", "yellow(|\\s+charcoal)", 66, "a bright yellow stick of charcoal");
+    
     var boxes = new ArrayList<ItemContainer>() {
       {
         add(smallBox);
@@ -151,7 +154,7 @@ public final class Game {
         "You are inside the mysterious blue room. Numbers are written on every wall.",
         "Upon entering you hear the door slam shut behind your back",
         "The door won't budge",
-        bossRoom1::isDefeated);
+        () -> true);
     var squaresRoom = new Room("Square room",
         "(square(s|))((\\s+room)|)",
         roomDesc + "a room full of square shapes floating in the air, some are combined into boxes, three to be exact\nEach box is of a different size - small, medium and large",
@@ -160,7 +163,9 @@ public final class Game {
     var greenRoom = new Room("Green room",
         "(green)((\\s+room)|)",
         "You are inside the mysterious green room. Letters are written on every wall.",
-        "");
+        "",
+        55,
+        "You can't open a door without a handle");
     var circlesRoom = new Room("Circles",
         "(circle(s|))((\\s+room)|)",
         "",
@@ -185,7 +190,9 @@ public final class Game {
     var yellowRoom = new Room("Yellow room",
         "(yellow)((\\s+room)|)",
         "",
-        "");
+        "",
+        66,
+        "You can't open a door without a handle");
     var prison = new Room("Prison",
         "prison((\\s+room)|)",
         "",
@@ -205,8 +212,8 @@ public final class Game {
     livingRoom.add(studyRoomKey);
     squaresRoom.add(smallBox, mediumBox, largeBox);
     prison.add(chocolatePrison);
-    bossRoom1.add(blueKey);
-    bossRoom2.add(greenKey);
+    bossRoom1.add(blueKey, greenCharcoal);
+    bossRoom2.add(greenKey, yellowCharcoal);
     bossRoom3.add(yellowKey);
     
     corridor.connect(bedroom, kitchen, livingRoom, studyRoom);
