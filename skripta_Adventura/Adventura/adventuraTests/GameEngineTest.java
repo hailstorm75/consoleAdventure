@@ -135,7 +135,7 @@ class GameEngineTest {
     
     assertFalse(game.isGameOver());
     
-    assertEquals("Circles", game.getCurrentRoom().getDisplayName());
+    assertEquals("Circles room", game.getCurrentRoom().getDisplayName());
     game.processStep(Command.initialize("examine note"));
     assertEquals(1, game.getPocket().getItems().size());
     game.processStep(Command.initialize("enter green room"));
@@ -147,7 +147,7 @@ class GameEngineTest {
     
     assertFalse(game.isGameOver());
     
-    assertEquals("Triangles", game.getCurrentRoom().getDisplayName());
+    assertEquals("Triangles room", game.getCurrentRoom().getDisplayName());
     assertEquals(1, game.getPocket().getItems().size());
     game.processStep(Command.initialize("take statue"));
     assertEquals(2, game.getPocket().getItems().size());
@@ -160,7 +160,7 @@ class GameEngineTest {
     
     assertFalse(game.isGameOver());
     
-    assertEquals("Numbers", game.getCurrentRoom().getDisplayName());
+    assertEquals("Numbers room", game.getCurrentRoom().getDisplayName());
     assertEquals(2, game.getPocket().getItems().size());
     game.processStep(Command.initialize("take ruler"));
     assertEquals(3, game.getPocket().getItems().size());
@@ -173,7 +173,7 @@ class GameEngineTest {
     
     assertFalse(game.isGameOver());
     
-    assertEquals("Circles", game.getCurrentRoom().getDisplayName());
+    assertEquals("Circles room", game.getCurrentRoom().getDisplayName());
     assertEquals(3, game.getPocket().getItems().size());
     game.processStep(Command.initialize("drop ruler"));
     assertEquals(2, game.getPocket().getItems().size());
@@ -196,7 +196,7 @@ class GameEngineTest {
     
     assertFalse(game.isGameOver());
     
-    assertEquals("Circles", game.getCurrentRoom().getDisplayName());
+    assertEquals("Circles room", game.getCurrentRoom().getDisplayName());
     game.processStep(Command.initialize("enter green room"));
     
     assertFalse(game.isGameOver());

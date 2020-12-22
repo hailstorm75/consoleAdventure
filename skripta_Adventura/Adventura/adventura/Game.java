@@ -166,15 +166,15 @@ public final class Game {
         "",
         55,
         "You can't open a door without a handle");
-    var circlesRoom = new Room("Circles",
+    var circlesRoom = new Room("Circles room",
         "(circle(s|))((\\s+room)|)",
-        "",
-        "");
-    var trianglesRoom = new TrapRoom("Triangles",
+        "You are inside the circles room. Everything is nauseatingly round.",
+        "You notice a round paper-note lying on the round floor.");
+    var trianglesRoom = new TrapRoom("Triangles room",
         "(triangle(s|))((\\s+room)|)",
         "",
         "");
-    var numbersRoom = new Room("Numbers",
+    var numbersRoom = new Room("Numbers room",
         "(number(s|))((\\s+room)|)",
         "",
         "");

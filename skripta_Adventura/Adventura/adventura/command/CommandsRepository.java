@@ -22,9 +22,9 @@ public final class CommandsRepository {
     put(Pattern.compile("(?<COMMAND>(where(|\\s+am I)|look around|location))", Pattern.CASE_INSENSITIVE), CommandType.Where);
     put(Pattern.compile("(?<COMMAND>(help|what(\\s+is|)|describe|explain))(\\s+(?<INPUT>.+))?", Pattern.CASE_INSENSITIVE), CommandType.Help);
     put(Pattern.compile("(?<COMMAND>(?:carry|take)(?:\\s+the)?)(?:\\s+(?<INPUT>(?:.(?!from))+)(?:\\s+from\\s+(?:the\\s+)?(?<INPUT2>.+))?)?", Pattern.CASE_INSENSITIVE), CommandType.Carry);
-    put(Pattern.compile("(?<COMMAND>(unlock|open)(|\\s+the))(\\s+(?<INPUT>.+))?", Pattern.CASE_INSENSITIVE), CommandType.Unlock);
-    put(Pattern.compile("(?<COMMAND>((examine|inspect)((\\s+the)|))|(look\\s+at))(\\s+(?<INPUT>.+))?", Pattern.CASE_INSENSITIVE), CommandType.Examine);
-    put(Pattern.compile("(?<COMMAND>((eat|consume|devour)((\\s+the)|)))(\\s+(?<INPUT>.+))?", Pattern.CASE_INSENSITIVE), CommandType.Eat);
+    put(Pattern.compile("(?<COMMAND>(?:unlock|open)(?:\\s+the)?)(?:\\s+(?<INPUT>.+))?", Pattern.CASE_INSENSITIVE), CommandType.Unlock);
+    put(Pattern.compile("(?<COMMAND>(?:(?:examine|inspect)(?:\\s+the)?)|(?:look\\s+at))(?:\\s+(?<INPUT>.+))?", Pattern.CASE_INSENSITIVE), CommandType.Examine);
+    put(Pattern.compile("(?<COMMAND>(?:(?:eat|consume|devour)(?:\\s+the)?))(?:\\s+(?<INPUT>.+))?", Pattern.CASE_INSENSITIVE), CommandType.Eat);
     put(Pattern.compile("(?:quit|stop|end|exit)(?:(?:\\s+the|)\\s+game|)", Pattern.CASE_INSENSITIVE), CommandType.End);
   }};
   
