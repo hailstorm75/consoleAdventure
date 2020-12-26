@@ -154,7 +154,7 @@ public final class Game {
         "You are inside the mysterious blue room. Numbers are written on every wall.",
         "Upon entering you hear the door slam shut behind your back",
         "The door won't budge",
-        () -> true);
+        () -> bossRoom1.isDefeated());
     var squaresRoom = new Room("Square room",
         "(square(s|))((\\s+room)|)",
         roomDesc + "a room full of square shapes floating in the air, some are combined into boxes, three to be exact\nEach box is of a different size - small, medium and large",
@@ -212,6 +212,7 @@ public final class Game {
     livingRoom.add(studyRoomKey);
     squaresRoom.add(smallBox, mediumBox, largeBox);
     prison.add(chocolatePrison);
+    blueRoom.addLockableExit(studyRoom);
     bossRoom1.add(blueKey, greenCharcoal);
     bossRoom2.add(greenKey, yellowCharcoal);
     bossRoom3.add(yellowKey);
@@ -657,8 +658,15 @@ public final class Game {
     
     // Unwrap the found room
     var extracted = nextRoom.get();
-    // If the room is locked..
-    if (extracted.isLocked())
+    
+    if (currentRoom instanceof AutoLockRoom)
+    {
+      var autoLockRoom = (AutoLockRoom) currentRoom;
+      if (autoLockRoom.isExitLocked(extracted))
+        return addExists(autoLockRoom.getLockedMessage().get());
+    }
+    // Otherwise if the room is locked..
+    else if (extracted.isLocked())
       // get the room locked message
       //noinspection OptionalGetWithoutIsPresent
       return addExists(extracted.getLockedMessage().get());
