@@ -3,23 +3,37 @@ package console;
 import java.io.*;
 import java.util.concurrent.Callable;
 
+/**
+ * A callable task for retrieving user input
+ *
+ * @version 1.2
+ */
 public class ConsoleInputTask implements Callable<String> {
   public String call() throws IOException {
+    // Get the input reader
     var br = new BufferedReader(new InputStreamReader(System.in));
     
     String input;
     do {
       try {
-        // wait until we have data to complete a readLine()
+        // While there is no data to read..
         while (!br.ready())
+          // Wait
           Thread.sleep(200);
         
+        // Read the user-input
         input = br.readLine();
-      } catch (InterruptedException e) {
+      }
+      // If the input was interrupted..
+      catch (InterruptedException e) {
+        // Return nothing
         return null;
       }
-    } while ("".equals(input));
+    }
+    // Repeat until the input is not empty
+    while (input.equals(""));
     
+    // Return the retrieved user-input
     return input;
   }
 }

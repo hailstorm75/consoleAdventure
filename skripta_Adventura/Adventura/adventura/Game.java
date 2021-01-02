@@ -1,13 +1,9 @@
-import command.Command;
-import command.CommandsRepository;
+import command.*;
 import common.GameBattle;
-import console.ConsoleEngine;
-import console.TextStyle;
+import console.*;
 import elements.*;
 import elements.rooms.*;
-import elements.specialItems.Consumable;
-import elements.specialItems.Key;
-import elements.specialItems.Note;
+import elements.specialItems.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -32,6 +28,11 @@ public final class Game {
       "(my(\\s+))|(backpack)",
       "A backpack, very handy when it comes to carrying items");
   
+  /**
+   * Getter for the Battle property
+   *
+   * @return the currently ongoing battle
+   */
   public Optional<GameBattle> getBattle() {
     return currentRoom instanceof BattleRoom
       ? Optional.of(((BattleRoom) currentRoom).getBattle())
@@ -79,21 +80,25 @@ public final class Game {
   private void initializeRooms() {
     // --- Initialize items -----------------------------------------------------------------------------
     
-    var corridorNote = new Note("paper-note", "(|paper(\\s+|-))(note)", "\"ERTkdfgkhUI*#5fsGO TO?<85Tudy =r00m///8\"");
+    var corridorNote = new Note("paper-note", "(paper(\\s+|-))?(note)", "\"ERTkdfgkhUI*#5fsGO TO?<85Tudy =r00m///8\"");
+    var circlesNote = new Note("paper-note", "(paper(\\s+|-))?(note)", "\"Bring totems\"");
     var studyRoomKey = new Key("key", 1, "a key");
-    var bossRoomBlueKey = new Key("key", "((myster(y|ious)\\s+|)key)", 2, "mysterious key");
-    var chocolateSquares = new Consumable("chocolate", "choco(|late)", "a delicious bar of chocolate");
-    var chocolatePrison = new Consumable("chocolate", "choco(|late)", "a delicious bar of chocolate");
-    var smallBox = new ItemContainer("Small box", "small(|\\s+box)", "a small floating box");
-    var mediumBox = new ItemContainer("Medium box", "medium(|\\s+box)", "a medium floating box");
-    var largeBox = new ItemContainer("Large box", "large(|\\s+box)", "a large floating box");
+    var bossRoomBlueKey = new Key("key", "((myster(y|ious)\\s+)?key)", 2, "mysterious key");
+    var chocolateSquares = new Consumable("chocolate", "choco(late)?", "a delicious bar of chocolate");
+    var chocolatePrison = new Consumable("chocolate", "choco(late)?", "a delicious bar of chocolate");
+    var smallBox = new ItemContainer("Small box", "small(\\s+box)?", "a small floating box");
+    var mediumBox = new ItemContainer("Medium box", "medium(\\s+box)?", "a medium floating box");
+    var largeBox = new ItemContainer("Large box", "large(\\s+box)?", "a large floating box");
     
-    var yellowKey = new Key("yellow key", "yellow(|\\s+key)", 69, "a mysterious yellow key");
-    var greenKey = new Key("green key", "green(|\\s+key)", 34, "a mysterious green key");
-    var blueKey = new Key("blue key", "blue(|\\s+key)", 42, "a mysterious blue key");
+    var yellowKey = new Key("yellow key", "yellow(\\s+key)?", 69, "a mysterious yellow key");
+    var greenKey = new Key("green key", "green(\\s+key)?", 34, "a mysterious green key");
+    var blueKey = new Key("blue key", "blue(\\s+key)?", 42, "a mysterious blue key");
     
-    var greenCharcoal = new Key("green charcoal", "green(|\\s+charcoal)", 55, "a bright green stick of charcoal");
-    var yellowCharcoal = new Key("yellow charcoal", "yellow(|\\s+charcoal)", 66, "a bright yellow stick of charcoal");
+    var greenCharcoal = new Key("green charcoal", "green(\\s+charcoal)?", 55, "a bright green stick of charcoal");
+    var yellowCharcoal = new Key("yellow charcoal", "yellow(\\s+charcoal)?", 66, "a bright yellow stick of charcoal");
+    
+    var statueTotem = new Totem("statue", 101, "miniature statue of a wise man");
+    var rulerTotem = new Totem("ruler", "(golden\\s+)?ruler", 102, "a golden ruler");
     
     var boxes = new ArrayList<ItemContainer>() {
       {
@@ -154,7 +159,7 @@ public final class Game {
         "You are inside the mysterious blue room. Numbers are written on every wall.",
         "Upon entering you hear the door slam shut behind your back",
         "The door won't budge",
-        () -> bossRoom1.isDefeated());
+        bossRoom1::isDefeated);
     var squaresRoom = new Room("Square room",
         "(square(s|))((\\s+room)|)",
         roomDesc + "a room full of square shapes floating in the air, some are combined into boxes, three to be exact\nEach box is of a different size - small, medium and large",
@@ -172,15 +177,15 @@ public final class Game {
         "You notice a round paper-note lying on the round floor.");
     var trianglesRoom = new TrapRoom("Triangles room",
         "(triangle(s|))((\\s+room)|)",
-        "",
-        "");
+        "You are inside the triangles room. The walls and ceiling are made out of spiky triangles.",
+        "In the center of the room you notice a miniature statue of a wise man");
     var numbersRoom = new Room("Numbers room",
         "(number(s|))((\\s+room)|)",
-        "",
-        "");
+        "You are inside the numbers room. You hear voices reciting some sequence of numbers",
+        "In the middle of the room you find a golden ruler");
     var bossRoom2 = new BattleRoom("Mystery room",
         "(mystery)((\\s+room)|)",
-        "",
+        "You are inside the mystery room. Darkness. Nothing to see.",
         "",
         null,
         new GameBattle(4, 2, "%d * %d", generator -> generator.get(0) * generator.get(1)),
@@ -189,13 +194,13 @@ public final class Game {
     
     var yellowRoom = new Room("Yellow room",
         "(yellow)((\\s+room)|)",
-        "",
+        "You are inside the mysterious yellow room.",
         "",
         66,
         "You can't open a door without a handle");
     var prison = new Room("Prison",
         "prison((\\s+room)|)",
-        "",
+        "You are inside the prison.",
         "");
     var bossRoom3 = new BattleRoom("Mystery room",
         "(mystery)((\\s+room)|)",
@@ -213,6 +218,9 @@ public final class Game {
     squaresRoom.add(smallBox, mediumBox, largeBox);
     prison.add(chocolatePrison);
     blueRoom.addLockableExit(studyRoom);
+    circlesRoom.add(circlesNote);
+    trianglesRoom.add(statueTotem);
+    numbersRoom.add(rulerTotem);
     bossRoom1.add(blueKey, greenCharcoal);
     bossRoom2.add(greenKey, yellowCharcoal);
     bossRoom3.add(yellowKey);
@@ -352,6 +360,12 @@ public final class Game {
     return currentRoom.getRoomNames();
   }
   
+  /**
+   * Appends current exits to a given message
+   *
+   * @param message message to append to
+   * @return message with the current exits
+   */
   private String addExists(String message) {
     return message + '\n' + currentRoom.getRoomNames();
   }
@@ -665,8 +679,9 @@ public final class Game {
       if (autoLockRoom.isExitLocked(extracted))
         return addExists(autoLockRoom.getLockedMessage().get());
     }
-    // Otherwise if the room is locked..
-    else if (extracted.isLocked())
+    
+    // If the room is locked..
+    if (extracted.isLocked())
       // get the room locked message
       //noinspection OptionalGetWithoutIsPresent
       return addExists(extracted.getLockedMessage().get());

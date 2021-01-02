@@ -212,16 +212,26 @@ public class ConsoleEngine {
    * @return user-provided input
    */
   public String getInput() {
+    // Set the printing color to blue
     setStyle(Color.Blue)
+        // Print the input symbol
         .print("> ")
+        // Reset the printing style to default
         .setDefaultStyle();
   
+    // Initialize the reader
     var input = new BufferedReader(new InputStreamReader(System.in));
+    // Attempt to retrieve the user-input..
     try {
+      // Get the user-input
       return input.readLine();
-    } catch (java.io.IOException exc) {
+    }
+    // If the retrieval was unsuccessful..
+    catch (java.io.IOException exc) {
+      // Print the error
       System.out.println("Failed to read input: " + exc.getMessage());
       
+      // Return empty user input
       return "";
     }
   }
@@ -232,23 +242,44 @@ public class ConsoleEngine {
    * @return user-provided input
    */
   public Optional<String> getInput(int timeout) throws InterruptedException {
+    // Set the printing color to red
+    setStyle(Color.Red)
+        // Print the input symbol
+        .print("> ")
+        // Reset the printing style to default
+        .setDefaultStyle();
+    
+    // Initialize a new thread
     var ex = Executors.newSingleThreadExecutor();
+    // Assume there is no user-input
     Optional<String> input = Optional.empty();
     
+    // Attempt to retrieve the user-input..
     try {
+      // Run the thread with the input task
       var result = ex.submit(new ConsoleInputTask());
       
+      // Attempt to get user-input..
       try {
+        // Get user-input in a set amount of time
         input = Optional.ofNullable(result.get(timeout, TimeUnit.SECONDS));
-      } catch (ExecutionException e) {
-        e.getCause().printStackTrace();
-      } catch (TimeoutException e) {
+      }
+      // If the retrieval was unsuccessful..
+      catch (ExecutionException e) {
+        // Output the error
+        System.out.println("Failed to read input: " + e.getMessage());
+      }
+      // If the user-input was not provided in the set amount of time..
+      catch (TimeoutException e) {
+        // Cancel the thread task
         result.cancel(true);
       }
     } finally {
+      // Close the thread
       ex.shutdownNow();
     }
     
+    // Return the user-input
     return input;
   }
 }

@@ -37,7 +37,7 @@ public class Item {
   /**
    * Getter for the description property
    *
-   * @return description of the items container
+   * @return description of the item
    */
   public String getDescription() {
     return getDescriptionFinal();
@@ -47,10 +47,21 @@ public class Item {
     return description;
   }
   
+  /**
+   * @param displayName item display name
+   * @param canCarry can the item be carried
+   * @param description item description
+   */
   public Item(@NotNull String displayName, boolean canCarry, @NotNull String description) {
     this(displayName, displayName, canCarry, description);
   }
   
+  /**
+   * @param displayName item display name
+   * @param matchName item match string
+   * @param canCarry can the item be carried
+   * @param description item description
+   */
   public Item(@NotNull String displayName, @NotNull String matchName, boolean canCarry, @NotNull String description) {
     // If the display name is empty..
     if (displayName.length() == 0)

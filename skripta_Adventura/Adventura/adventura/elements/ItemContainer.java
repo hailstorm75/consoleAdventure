@@ -6,6 +6,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Class representing an item container
+ * @author Denis Akopyan
+ * @version 1.0
+ */
 public class ItemContainer extends Item {
   private final Set<Item> items = new HashSet<>();
   private int lockId;

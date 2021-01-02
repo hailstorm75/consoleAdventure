@@ -7,15 +7,26 @@ import org.jetbrains.annotations.NotNull;
  * Room with a battle sequence
  *
  * @author Denis Akopyan
+ * @version 1.0
  */
 public class BattleRoom extends Room {
   private final Runnable firstEntryAction;
   private final GameBattle battle;
   
+  /**
+   * Getter for the Battle property
+   *
+   * @return room battle logic
+   */
   public GameBattle getBattle() {
     return battle;
   }
   
+  /**
+   * Determines whether the room battle is defeated
+   *
+   * @return is the room battle defeated
+   */
   public boolean isDefeated() {
     return battle.isDefeated();
   }
@@ -50,6 +61,11 @@ public class BattleRoom extends Room {
       firstEntryAction.run();
   }
   
+  /**
+   * Retrieves the room description
+   *
+   * @return room description
+   */
   @Override
   public String getDescription() {
     if (!isDiscovered())

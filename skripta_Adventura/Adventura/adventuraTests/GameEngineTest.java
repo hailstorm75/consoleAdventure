@@ -8,6 +8,11 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Game engine test suit
+ * @author Denis Akopyan
+ * @version 1.0
+ */
 class GameEngineTest {
   @Test
   void getInstance() {
@@ -459,7 +464,7 @@ class GameEngineTest {
     // Step 29
     assertEquals("You pick up the paper-note and read what it says:\n" +
             "\"Bring totems\"\n" +
-            "You put paper-note back to where you've found it\n" +
+            "You put the paper-note back to where you've found it\n" +
             "From here you can go to: green room, mystery room",
         removeStylingChars(game.processStep(Command.initialize("examine the note"))));
     
@@ -469,7 +474,7 @@ class GameEngineTest {
         removeStylingChars(game.processStep(Command.initialize("enter green room"))));
     
     // Step 31
-    assertEquals("You are inside the triangles green room. The walls and ceiling are made out of spiky triangles.\n" +
+    assertEquals("You are inside the triangles room. The walls and ceiling are made out of spiky triangles.\n" +
             "In the center of the room you notice a miniature statue of a wise man\n" +
             "From here you can go to: green room",
         removeStylingChars(game.processStep(Command.initialize("enter triangles"))));

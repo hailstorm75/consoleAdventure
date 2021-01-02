@@ -106,7 +106,6 @@ public final class GameEngine {
       var attack = ConsoleEngine
           .getInstance()
           .println(problem)
-          .print("> ")
           .getInput(10);
 
       if (attack.isEmpty()) {

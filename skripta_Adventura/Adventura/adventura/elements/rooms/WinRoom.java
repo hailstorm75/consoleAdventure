@@ -4,6 +4,12 @@ import elements.specialItems.Key;
 import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
+/**
+ * Class representing the winning room
+ *
+ * @author Denis Akopyan
+ * @version 1.0
+ */
 public class WinRoom extends Room {
   private final Set<Integer> locks;
   private boolean isLocked = true;
@@ -26,11 +32,24 @@ public class WinRoom extends Room {
     this.locks = new HashSet<>(locks);
   }
   
+  /**
+   * Attempts to unlock the current entity
+   *
+   * @implNote Not supported
+   * @param key key to use to unlock
+   * @return true if unlocked
+   */
   @Override
   public boolean unlock(@NotNull Key key) {
     return false;
   }
   
+  /**
+   * Attempts to unlock the current entity
+   *
+   * @param keys keys to use to unlock
+   * @return true if unlocked
+   */
   public boolean unlock(@NotNull List<Key> keys) {
     var result = keys
         .stream()
@@ -43,6 +62,11 @@ public class WinRoom extends Room {
     return result;
   }
   
+  /**
+   * Checks if the entity is locked
+   *
+   * @return true if the entity is locked
+   */
   @Override
   public boolean isLocked() {
     return isLocked;
