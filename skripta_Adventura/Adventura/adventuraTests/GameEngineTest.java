@@ -506,7 +506,7 @@ class GameEngineTest {
     // Step 36
     assertEquals("The numbers root shuts behind you.\n" +
             "You are inside the mysterious green room. Letters are written on every wall.\n" +
-            "From here you can go to: study, circles room",
+            "From here you can go to: circles room, study",
         removeStylingChars(game.processStep(Command.initialize("go to the green room"))));
     
     // Step 37

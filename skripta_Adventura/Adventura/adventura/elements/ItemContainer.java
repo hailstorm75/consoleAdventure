@@ -16,12 +16,6 @@ public class ItemContainer extends Item {
   private int lockId;
   private final String lockedMessage;
   
-  /**
-   * Default constructor
-   *
-   * @param displayName name of the item container
-   * @param description description of the item container
-   */
   public ItemContainer(@NotNull String displayName, @NotNull String matchName, @NotNull String description, int lockId, @NotNull String lockedMessage) {
     super(displayName, matchName, false, description);
     this.lockId = lockId;

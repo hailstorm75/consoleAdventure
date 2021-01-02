@@ -1,6 +1,9 @@
 package elements.rooms;
 
+import elements.*;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 /**
  * Class representing a room which triggers a death trap upon extracting an object
@@ -8,15 +11,75 @@ import org.jetbrains.annotations.NotNull;
  * @version 1.0
  */
 public class TrapRoom extends Room {
-  public TrapRoom(@NotNull String displayName, @NotNull String matchName, @NotNull String description, @NotNull String firstEntryDescription) {
+  private final String trapMessage;
+  private final String exitMessage;
+  private boolean trapActivated;
+  
+  /**
+   * Getter for the TrapMessage property
+   *
+   * @return trap message
+   */
+  public String getTrapMessage() {
+    return trapMessage;
+  }
+  
+  /**
+   * Getter for the ExitMessage property
+   *
+   * @return exit message
+   */
+  public String getExitMessage() {
+    return exitMessage;
+  }
+  
+  /**
+   * Determines whether the trap had been activated
+   *
+   * @return true if the trap had been activated
+   */
+  public boolean isTrapActivated() {
+    return trapActivated;
+  }
+  
+  /**
+   * Default constructor
+   * @param displayName item display name
+   * @param matchName item match string
+   * @param description item description
+   * @param firstEntryDescription
+   * @param trapMessage message to display when the trap is triggered
+   * @param exitMessage message to display when leaving the room
+   */
+  public TrapRoom(@NotNull String displayName, @NotNull String matchName, @NotNull String description, @NotNull String firstEntryDescription, @NotNull String trapMessage, @NotNull String exitMessage) {
     super(displayName, matchName, description, firstEntryDescription);
+    this.trapMessage = trapMessage;
+    this.exitMessage = exitMessage;
   }
   
-  public TrapRoom(@NotNull String displayName, @NotNull String description, @NotNull String firstEntryDescription) {
-    super(displayName, description, firstEntryDescription);
+  @Override
+  public Optional<Item> takeOut(@NotNull String name) {
+    var item = super.takeOut(name);
+    if (item.isPresent())
+      trapActivated = true;
+    
+    return item;
   }
   
-  public TrapRoom(@NotNull String displayName, @NotNull String matchName, @NotNull String description, @NotNull String firstEntryDescription, int lockId, @NotNull String lockedMessage) {
-    super(displayName, matchName, description, firstEntryDescription, lockId, lockedMessage);
+  /**
+   * Adds given items to the container
+   *
+   * @param items Items to add
+   * @return instance to the items container for method chaining
+   */
+  @Override
+  public ItemContainer add(Item... items) {
+    // If the more than one item is attempted to be added to the given room..
+    if (items.length != 1 || this.getItems().size() > 0)
+      // throw an exception
+      throw new UnsupportedOperationException("Only one item can be added to the room");
+    
+    // Add the item
+    return super.add(items);
   }
 }

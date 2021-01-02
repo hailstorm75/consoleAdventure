@@ -62,6 +62,11 @@ public class Room extends ItemContainer {
     }
   }
   
+  public final void disconnect(@NotNull final Room room) {
+    this.rooms.remove(room);
+    room.rooms.remove(this);
+  }
+  
   @Override
   public boolean equals(@NotNull final Object input) {
     // If the compared object is a room..

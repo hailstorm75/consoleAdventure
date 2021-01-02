@@ -24,9 +24,9 @@ public final class Game {
   private Room winRoom;
   private int lives = 3;
   private final static String roomDesc = "You are in ";
-  private final ItemContainer pocket = new ItemContainer("my backpack",
-      "(my(\\s+))|(backpack)",
-      "A backpack, very handy when it comes to carrying items");
+  private final ItemContainer pocket = new ItemContainer("my pocket",
+      "(:?my\\s+)?pocket",
+      "A pocket, very handy when it comes to carrying items");
   
   /**
    * Getter for the Battle property
@@ -178,11 +178,15 @@ public final class Game {
     var trianglesRoom = new TrapRoom("Triangles room",
         "(triangle(s|))((\\s+room)|)",
         "You are inside the triangles room. The walls and ceiling are made out of spiky triangles.",
-        "In the center of the room you notice a miniature statue of a wise man");
-    var numbersRoom = new Room("Numbers room",
+        "In the center of the room you notice a miniature statue of a wise man",
+        "The room starts rumbling and the spiky walls slowly coming closer and closer. There isn't much time",
+        "The triangle room shuts behind you. Thankfully you got out in one piece.");
+    var numbersRoom = new TrapRoom("Numbers room",
         "(number(s|))((\\s+room)|)",
         "You are inside the numbers room. You hear voices reciting some sequence of numbers",
-        "In the middle of the room you find a golden ruler");
+        "In the middle of the room you find a golden ruler",
+        "The voices stop. The room is in complete silence",
+        "The numbers root shuts behind you.");
     var bossRoom2 = new BattleRoom("Mystery room",
         "(mystery)((\\s+room)|)",
         "You are inside the mystery room. Darkness. Nothing to see.",
@@ -442,9 +446,13 @@ public final class Game {
       
       // Put the item in the pocket
       pocket.add(item.get());
+  
+      var result = "You take the " + item.get().getDisplayName() + " and put it inside your pocket";
       
-      // Notify the user
-      return "You take the " + item.get().getDisplayName() + " and put it inside your pocket";
+      if (currentRoom instanceof TrapRoom)
+        result += "\n" + ((TrapRoom) currentRoom).getTrapMessage();
+      
+      return result;
     }
     
     // Get the item container
@@ -733,14 +741,27 @@ public final class Game {
       // get the room locked message
       //noinspection OptionalGetWithoutIsPresent
       return addExists(extracted.getLockedMessage().get());
+  
+    // Describe the newly entered room
+    var description = extracted.getDescription();
+    // Mark the room as discovered
+    extracted.discover();
+    
+    // If the current room is a trap room..
+    if (currentRoom instanceof TrapRoom)
+    {
+      // Cast the current room
+      var trapRoom = (TrapRoom) currentRoom;
+      // If the trap room was activated..
+      if (trapRoom.isTrapActivated())
+        // disconnect the room after leaving it
+        extracted.disconnect(trapRoom);
+      
+      description = trapRoom.getExitMessage() + "\n" + description;
+    }
     
     // Set the next room as the current
     currentRoom = extracted;
-    
-    // Describe the newly entered room
-    var description = currentRoom.getDescription();
-    // Mark the room as discovered
-    currentRoom.discover();
   
     return currentRoom instanceof BattleRoom
       ? description

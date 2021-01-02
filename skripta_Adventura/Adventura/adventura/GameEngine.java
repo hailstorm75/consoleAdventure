@@ -3,6 +3,7 @@ import common.GameBattle;
 import console.Color;
 import console.ConsoleEngine;
 import console.TextStyle;
+import elements.rooms.TrapRoom;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -79,8 +80,23 @@ public final class GameEngine {
     
     // Until the game is over..
     while (!game.isGameOver()) {
-      // Get the user-input
-      var input = ConsoleEngine.getInstance().getInput();
+      var input = "";
+      
+      if (game.getCurrentRoom() instanceof TrapRoom && ((TrapRoom) game.getCurrentRoom()).isTrapActivated())
+      {
+        var inputTry = ConsoleEngine.getInstance().getInput(10);
+        if (inputTry.isPresent())
+          input = inputTry.get();
+        else
+        {
+          // TODO: Game over
+        }
+      }
+      // Otherwise..
+      else
+        // Get the user-input
+        input = ConsoleEngine.getInstance().getInput();
+      
       // Compose the input into a command
       var command = Command.initialize(input);
       
