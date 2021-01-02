@@ -30,12 +30,7 @@ public class AutoLockRoom extends Room {
   }
   
   public final boolean isExitLocked(Room exit) {
-    return lockableExits.contains(exit);
-  }
-  
-  @Override
-  public boolean isLocked() {
-    return isDiscovered() && !unlockCondition.get();
+    return lockableExits.contains(exit) && isDiscovered() && !unlockCondition.get();
   }
   
   @Override
