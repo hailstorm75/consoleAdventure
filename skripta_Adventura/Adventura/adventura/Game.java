@@ -333,6 +333,7 @@ public final class Game {
     return switch (extracted.getType()) {
       case Help -> addExists(manual(extracted));
       case Carry -> addExists(carry(extracted));
+      case Drop -> addExists(drop(extracted));
       case Goto -> go(extracted);
       case Unlock -> addExists(unlock(extracted));
       case Where -> addExists(where());
@@ -429,6 +430,7 @@ public final class Game {
       // ask the user to specify it
       return "Carry what?";
     
+    // If there is only one parameter..
     if (command.hasNoSecondParameter()) {
       // Try to get the item to carry
       var item = currentRoom.takeOut(command.getFirstParameter());
@@ -445,26 +447,72 @@ public final class Game {
       return "You take the " + item.get().getDisplayName() + " and put it inside your pocket";
     }
     
+    // Get the item container
     var container = currentRoom
+        // Find all items
         .getItems()
+        // Iterate over all items
         .stream()
+        // Filter out the containers
         .filter(item -> item instanceof ItemContainer)
+        // Cast to the containers
         .map(item -> (ItemContainer) item)
+        // Find the matching container
         .filter(c -> c.isMatch(command.getSecondParameter()))
+        // Find the first matching container
         .findFirst();
     
+    // If no container is found..
     if (container.isEmpty())
+      // Notify the user
       return "Don't know where to take " + command.getFirstParameter() + " from";
     
+    // Extract the container
     var extractedC = container.get();
+    // Try to take out requested item
     var item = extractedC.takeOut(command.getFirstParameter());
     
+    // If no item is found..
     if (item.isEmpty())
+      // Notify the user
       return "There is no such item inside " + command.getSecondParameter();
     
+    // Place it inside the pocket
     pocket.add(item.get());
     
+    // Notify a user
     return "You take the " + item.get().getDisplayName() + " and put it inside your pocket";
+  }
+  
+  /**
+   * Command for dropping an item
+   *
+   * @param command drop command source
+   * @return processing result
+   */
+  private String drop(@NotNull final Command command) {
+    // If the command is missing the parameter..
+    if (command.hasNoFirstParameter())
+      // ask the user to specify it
+      return "Drop what?";
+  
+    // If the current room is a trap room..
+    if (currentRoom instanceof TrapRoom)
+      // Notify the user
+      return "Cannot drop anything in here";
+    
+    // Try retrieve the item from the pocket
+    var item = pocket.takeOut(command.getFirstParameter());
+    // If the item wasn't found..
+    if (item.isEmpty())
+      // Notify the user
+      return "I don't know what that is";
+    
+    // Place the item in the room
+    currentRoom.add(item.get());
+    
+    // Notify the user
+    return "You place the " + item.get().getDisplayName() + " on the floor";
   }
   
   /**

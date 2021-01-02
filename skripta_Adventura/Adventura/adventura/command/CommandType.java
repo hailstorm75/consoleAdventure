@@ -17,6 +17,10 @@ public enum CommandType {
    */
   Carry("Carry"),
   /**
+   * Drops a given item on the floor
+   */
+  Drop("Drop"),
+  /**
    * Unlocks a given item container
    */
   Unlock("Unlock"),

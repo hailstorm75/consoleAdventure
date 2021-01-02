@@ -22,6 +22,7 @@ public final class CommandsRepository {
     put(Pattern.compile("(?<COMMAND>(where(|\\s+am I)|look around|location))", Pattern.CASE_INSENSITIVE), CommandType.Where);
     put(Pattern.compile("(?<COMMAND>(help|what(\\s+is|)|describe|explain))(\\s+(?<INPUT>.+))?", Pattern.CASE_INSENSITIVE), CommandType.Help);
     put(Pattern.compile("(?<COMMAND>(?:carry|take)(?:\\s+the)?)(?:\\s+(?<INPUT>(?:.(?!from))+)(?:\\s+from\\s+(?:the\\s+)?(?<INPUT2>.+))?)?", Pattern.CASE_INSENSITIVE), CommandType.Carry);
+    put(Pattern.compile("(?<COMMAND>(?:drop)(?:\\s+the)?)(?:\\s+(?<INPUT>.+))?", Pattern.CASE_INSENSITIVE), CommandType.Drop);
     put(Pattern.compile("(?<COMMAND>(?:unlock|open)(?:\\s+the)?)(?:\\s+(?<INPUT>.+))?", Pattern.CASE_INSENSITIVE), CommandType.Unlock);
     put(Pattern.compile("(?<COMMAND>(?:(?:examine|inspect)(?:\\s+the)?)|(?:look\\s+at))(?:\\s+(?<INPUT>.+))?", Pattern.CASE_INSENSITIVE), CommandType.Examine);
     put(Pattern.compile("(?<COMMAND>(?:(?:eat|consume|devour)(?:\\s+the)?))(?:\\s+(?<INPUT>.+))?", Pattern.CASE_INSENSITIVE), CommandType.Eat);
@@ -37,6 +38,7 @@ public final class CommandsRepository {
     commandsManual.put(CommandType.End, "Ends the game");
     commandsManual.put(CommandType.Examine, "Examines a given item");
     commandsManual.put(CommandType.Carry, "Put the given item into the pocket. Example1: take key. Example2: take key from box");
+    commandsManual.put(CommandType.Drop, "Takes the given item from the pocket and drops it on the floor of the current room. Example: drop key");
     commandsManual.put(CommandType.Where, "Examines the current player location");
     commandsManual.put(CommandType.Goto, "The player will enter the specified room. Example: go to the kitchen");
     commandsManual.put(CommandType.Unlock, "Unlocks a given room or container");
