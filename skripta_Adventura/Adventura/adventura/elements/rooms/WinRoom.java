@@ -3,6 +3,7 @@ package elements.rooms;
 import elements.specialItems.Key;
 import org.jetbrains.annotations.NotNull;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Class representing the winning room
@@ -53,13 +54,15 @@ public class WinRoom extends Room {
   public boolean unlock(@NotNull List<Key> keys) {
     var result = keys
         .stream()
-        .map(Key::getId)
-        .filter(locks::contains)
-        .count() == locks.size();
+        .filter(x -> locks.contains(x.getId()))
+        .collect(Collectors.toList());
     
-    isLocked = !result;
+    isLocked = !(result.size() == locks.size());
     
-    return result;
+    if (!isLocked)
+      keys.removeAll(result);
+    
+    return !isLocked;
   }
   
   /**

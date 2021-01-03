@@ -211,7 +211,7 @@ class GameEngineTest {
     
     assertFalse(game.isGameOver());
     
-    assertEquals("Study room", game.getCurrentRoom().getDisplayName());
+    assertEquals("Study", game.getCurrentRoom().getDisplayName());
     assertEquals(3, game.getPocket().getItems().size());
     game.processStep(Command.initialize("unlock yellow room"));
     assertEquals(2, game.getPocket().getItems().size());
@@ -250,7 +250,7 @@ class GameEngineTest {
     
     assertFalse(game.isGameOver());
     
-    assertEquals("Study room", game.getCurrentRoom().getDisplayName());
+    assertEquals("Study", game.getCurrentRoom().getDisplayName());
     game.processStep(Command.initialize("enter corridor"));
     
     assertFalse(game.isGameOver());
@@ -539,12 +539,12 @@ class GameEngineTest {
     
     // Step 41
     assertEquals("You take the green key and put it inside your pocket\n" +
-            "From here you can go to: blue room",
+            "From here you can go to: circles room",
         removeStylingChars(game.processStep(Command.initialize("take green key"))));
     
     // Step 42
     assertEquals("You take the yellow charcoal and put it inside your pocket\n" +
-            "From here you can go to: blue room",
+            "From here you can go to: circles room",
         removeStylingChars(game.processStep(Command.initialize("take yellow charcoal"))));
     
     // Step 43
@@ -558,7 +558,7 @@ class GameEngineTest {
         removeStylingChars(game.processStep(Command.initialize("go to the green room"))));
     
     // Step 45
-    assertEquals("You are in the study. Books are scattered all over the place and where once stood a mighty bookshelf now is a wall with three silhouettes of doors.\n" +
+    assertEquals("You are in the study.\n" +
             "From here you can go to: blue room, corridor, green room, yellow room",
         removeStylingChars(game.processStep(Command.initialize("go to the study"))));
     
@@ -569,7 +569,7 @@ class GameEngineTest {
     
     // Step 47
     assertEquals("You are inside the mysterious yellow room.\n" +
-            "From here you can go to: yellow room, prison",
+            "From here you can go to: prison, study",
         removeStylingChars(game.processStep(Command.initialize("enter yellow room"))));
     
     // Step 48
@@ -580,8 +580,7 @@ class GameEngineTest {
     // Step 49
     assertEquals("You are inside the mystery room\n" +
             "There stands a dark silhouette of a man\n" +
-            "He speaks: \"You dare challenge me, the mighty Pythagoras, puny child?\"\n" +
-            "From here you can go to: mystery room, yellow room",
+            "He speaks: \"You dare challenge me, the mighty Pythagoras, puny child?\"",
         removeStylingChars(game.processStep(Command.initialize("enter mystery room"))));
     
     // GameBattle start -------------------------------------------------------------------
@@ -597,16 +596,16 @@ class GameEngineTest {
     
     // Step 51
     assertEquals("You are inside the prison.\n" +
-            "From here you can go to: yellow room",
+            "From here you can go to: mystery room, yellow room",
         removeStylingChars(game.processStep(Command.initialize("go to prison"))));
     
     // Step 52
     assertEquals("You are inside the mysterious yellow room.\n" +
-            "From here you can go to: yellow room, prison",
+            "From here you can go to: prison, study",
         removeStylingChars(game.processStep(Command.initialize("enter yellow room"))));
     
     // Step 53
-    assertEquals("You are in the study. Books are scattered all over the place and where once stood a mighty bookshelf now is a wall with three silhouettes of doors.\n" +
+    assertEquals("You are in the study.\n" +
             "From here you can go to: blue room, corridor, green room, yellow room",
         removeStylingChars(game.processStep(Command.initialize("go to study"))));
     

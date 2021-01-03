@@ -35,8 +35,8 @@ public final class Game {
    */
   public Optional<GameBattle> getBattle() {
     return currentRoom instanceof BattleRoom
-      ? Optional.of(((BattleRoom) currentRoom).getBattle())
-      : Optional.empty();
+        ? Optional.of(((BattleRoom) currentRoom).getBattle())
+        : Optional.empty();
   }
   
   /**
@@ -171,10 +171,6 @@ public final class Game {
         "",
         55,
         "You can't open a door without a handle");
-    var circlesRoom = new Room("Circles room",
-        "(circle(s|))((\\s+room)|)",
-        "You are inside the circles room. Everything is nauseatingly round.",
-        "You notice a round paper-note lying on the round floor.");
     var trianglesRoom = new TrapRoom("Triangles room",
         "(triangle(s|))((\\s+room)|)",
         "You are inside the triangles room. The walls and ceiling are made out of spiky triangles.",
@@ -190,11 +186,27 @@ public final class Game {
     var bossRoom2 = new BattleRoom("Mystery room",
         "(mystery)((\\s+room)|)",
         "You are inside the mystery room. Darkness. Nothing to see.",
-        "",
+        "You feel something watching you\nA monster appears!",
         null,
         new GameBattle(4, 2, "%d * %d", generator -> generator.get(0) * generator.get(1)),
-        666666,
+        360,
         "");
+    var circlesRoom = new TotemRoom("Circles room",
+        "(circle(s|))((\\s+room)|)",
+        "You are inside the circles room. Everything is nauseatingly round.",
+        "You notice a round paper-note lying on the round floor.",
+        -1,
+        "It seems to be locked",
+        new ArrayList<>() {{
+          add(101);
+          add(102);
+        }},
+        () -> {
+          var key = new Key("-", 360, "");
+          bossRoom2.unlock(key);
+          
+          return "The mystery rooms door opens in front of you";
+        });
     
     var yellowRoom = new Room("Yellow room",
         "(yellow)((\\s+room)|)",
@@ -208,11 +220,12 @@ public final class Game {
         "");
     var bossRoom3 = new BattleRoom("Mystery room",
         "(mystery)((\\s+room)|)",
-        "",
-        "",
+        "You are inside the mystery room",
+        "There stands a dark silhouette of a man\n" +
+            "He speaks: \"You dare challenge me, the mighty Pythagoras, puny child?\"",
         null,
         new GameBattle(5, 3, "%d * %d + %d", generator -> generator.get(0) * generator.get(1) + generator.get(2)),
-        666666,
+        -1,
         "");
     
     // --- Map rooms and items ----------------------------------------------------------------------------
@@ -446,7 +459,7 @@ public final class Game {
       
       // Put the item in the pocket
       pocket.add(item.get());
-  
+      
       var result = "You take the " + item.get().getDisplayName() + " and put it inside your pocket";
       
       if (currentRoom instanceof TrapRoom)
@@ -503,7 +516,7 @@ public final class Game {
     if (command.hasNoFirstParameter())
       // ask the user to specify it
       return "Drop what?";
-  
+    
     // If the current room is a trap room..
     if (currentRoom instanceof TrapRoom)
       // Notify the user
@@ -519,8 +532,16 @@ public final class Game {
     // Place the item in the room
     currentRoom.add(item.get());
     
+    var actionOutput = "";
+    if (currentRoom instanceof TotemRoom) {
+      var totemRoom = (TotemRoom) currentRoom;
+      var actionResult = totemRoom.tryRunTotemAction();
+      if (actionResult.isPresent())
+        actionOutput = "\n" + actionResult.get();
+    }
+    
     // Notify the user
-    return "You place the " + item.get().getDisplayName() + " on the floor";
+    return "You place the " + item.get().getDisplayName() + " on the floor" + actionOutput;
   }
   
   /**
@@ -610,7 +631,7 @@ public final class Game {
         // Iterate over every item
         .stream()
         // Materialize a collection of key items
-        .filter(x -> x instanceof Key).map(x -> (Key) x).collect(Collectors.toUnmodifiableList());
+        .filter(x -> x instanceof Key).map(x -> (Key) x).collect(Collectors.toList());
     
     // Try to get a room
     var room = currentRoom.getRoom(name);
@@ -661,11 +682,17 @@ public final class Game {
           // Cast the room
           var winRoom = (WinRoom) roomElement;
           
+          var keysCopy = new ArrayList<>(keys);
           // If the room was unlocked..
-          if (winRoom.unlock(keys))
+          if (winRoom.unlock(keys)) {
+            keysCopy.stream().filter(key -> !keys.contains(key)).forEach(key -> {
+              pocket.takeOut(key.getDisplayName());
+            });
+            
             // notify the user
             return "You've unlocked the " + name;
-            // Otherwise
+          }
+          // Otherwise
           else
             // notify the user
             return name + " won't open. Probably needs more keys";
@@ -729,8 +756,7 @@ public final class Game {
     // Unwrap the found room
     var extracted = nextRoom.get();
     
-    if (currentRoom instanceof AutoLockRoom)
-    {
+    if (currentRoom instanceof AutoLockRoom) {
       var autoLockRoom = (AutoLockRoom) currentRoom;
       if (autoLockRoom.isExitLocked(extracted))
         return addExists(autoLockRoom.getLockedMessage().get());
@@ -741,15 +767,14 @@ public final class Game {
       // get the room locked message
       //noinspection OptionalGetWithoutIsPresent
       return addExists(extracted.getLockedMessage().get());
-  
+    
     // Describe the newly entered room
     var description = extracted.getDescription();
     // Mark the room as discovered
     extracted.discover();
     
     // If the current room is a trap room..
-    if (currentRoom instanceof TrapRoom)
-    {
+    if (currentRoom instanceof TrapRoom) {
       // Cast the current room
       var trapRoom = (TrapRoom) currentRoom;
       // If the trap room was activated..
@@ -762,9 +787,9 @@ public final class Game {
     
     // Set the next room as the current
     currentRoom = extracted;
-  
+    
     return currentRoom instanceof BattleRoom
-      ? description
-      : addExists(description);
+        ? description
+        : addExists(description);
   }
 }
