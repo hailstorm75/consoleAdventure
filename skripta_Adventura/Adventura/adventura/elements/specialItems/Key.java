@@ -9,37 +9,37 @@ import org.jetbrains.annotations.NotNull;
  * @version 1.0
  */
 public class Key extends Item {
-  private final int id;
+  private final int keyId;
   
   /**
    * Getter for the Id property
    *
    * @return id value
    */
-  public int getId() {
-    return id;
+  public int getKeyId() {
+    return keyId;
   }
   
   /**
    * Default constructor
    *
    * @param displayName name of the item
-   * @param id key id
+   * @param keyId key id
    * @param description key item description
    */
-  public Key(@NotNull String displayName, int id, @NotNull String description) {
+  public Key(@NotNull String displayName, int keyId, @NotNull String description) {
     super(displayName, true, description);
-    this.id = id;
+    this.keyId = keyId;
   }
   
   /**
    * @param displayName name of the item
    * @param matchName key item match string
-   * @param id key id
+   * @param keyId key id
    * @param description key item description
    */
-  public Key(@NotNull String displayName, @NotNull String matchName, int id, @NotNull String description) {
+  public Key(@NotNull String displayName, @NotNull String matchName, int keyId, @NotNull String description) {
     super(displayName, matchName, true, description);
-    this.id = id;
+    this.keyId = keyId;
   }
 }

@@ -94,14 +94,16 @@ public class ItemContainer extends Item {
    */
   public boolean unlock(Key key) {
     // If the entity is already unlocked..
-    if (!isLocked())
+    if (!isLocked()) {
       // nothing was unlocked
       return false;
+    }
     
     // If the key doesn't fit..
-    if (lockId != key.getId())
+    if (lockId != key.getKeyId()) {
       // nothing was unlocked
       return false;
+    }
     
     // Set the locked state
     lockId = -1;
@@ -140,16 +142,18 @@ public class ItemContainer extends Item {
         .findFirst();
   
     // If no item was found..
-    if (item.isEmpty())
+    if (item.isEmpty()) {
       // return empty
       return Optional.empty();
+    }
   
     // Extract the found item
     var extracted = item.get();
     // If the item can't be carried..
-    if (!extracted.getCanCarry())
+    if (!extracted.getCanCarry()) {
       // return empty
       return Optional.empty();
+    }
     
     // remove the item from the container
     items.remove(extracted);

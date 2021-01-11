@@ -66,9 +66,10 @@ public class GameBattle {
     // Check whether the defence matches the solution
     var result = input == currentSolution;
     // If the defence was a success the given number of times..
-    if (result && ++hits == rounds)
+    if (result && ++hits == rounds) {
       // the battle is won
       defeated = true;
+    }
     
     // return defence success state
     return result;
@@ -83,9 +84,10 @@ public class GameBattle {
     // Prepare the parameters collection
     var parameters = new ArrayList<Integer>();
     // For the number of required parameters..
-    for (int i = 0; i < this.parameters; i++)
+    for (int i = 0; i < this.parameters; i++) {
       // populate the parameters with a random number
       parameters.add(numberGenerator.nextInt(50));
+    }
     
     // Get the current problem solution
     currentSolution = problemGenerator.apply(parameters);

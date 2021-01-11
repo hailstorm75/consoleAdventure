@@ -85,8 +85,9 @@ public final class GameEngine {
       if (game.getCurrentRoom() instanceof TrapRoom && ((TrapRoom) game.getCurrentRoom()).isTrapActivated())
       {
         var inputTry = ConsoleEngine.getInstance().getInput(10);
-        if (inputTry.isPresent())
+        if (inputTry.isPresent()) {
           input = inputTry.get();
+        }
         else
         {
           ConsoleEngine.getInstance().println("You've been killed by a trap");
@@ -94,9 +95,10 @@ public final class GameEngine {
         }
       }
       // Otherwise..
-      else
+      else {
         // Get the user-input
         input = ConsoleEngine.getInstance().getInput();
+      }
       
       // Compose the input into a command
       var command = Command.initialize(input);
@@ -109,12 +111,10 @@ public final class GameEngine {
       ConsoleEngine.getInstance().typeOutLn(output);
       
       var battle = getGameInstance().getBattle();
-      if (battle.isPresent())
-        if (runBattle(battle.get()))
-        {
-          ConsoleEngine.getInstance().println("You've been killed in battle");
-          return;
-        }
+      if (battle.isPresent() && runBattle(battle.get())) {
+        ConsoleEngine.getInstance().println("You've been killed in battle");
+        return;
+      }
     }
   }
   
@@ -130,15 +130,17 @@ public final class GameEngine {
           .getInput(10);
 
       if (attack.isEmpty()) {
-        if (game.removeLives())
+        if (game.removeLives()) {
           continue;
+        }
         return false;
       }
 
-      var answer = TryParse(attack.get());
+      var answer = tryParse(attack.get());
       if ((answer.isEmpty() || !battle.defend(answer.get()))) {
-        if (game.removeLives())
+        if (game.removeLives()) {
           continue;
+        }
         return false;
       }
     }
@@ -146,7 +148,7 @@ public final class GameEngine {
     return true;
   }
   
-  private static Optional<Integer> TryParse(@NotNull String value) {
+  private static Optional<Integer> tryParse(@NotNull String value) {
     try {
       return Optional.of(Integer.valueOf(value));
     } catch (NumberFormatException x) {

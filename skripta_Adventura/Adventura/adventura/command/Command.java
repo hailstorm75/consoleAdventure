@@ -11,7 +11,7 @@ import java.util.Optional;
  * @author Denis Akopyan
  * @version 3.0
  */
-public class Command {
+public final class Command {
   private final CommandType type;
   private final String parameterA;
   private final String parameterB;
@@ -46,9 +46,10 @@ public class Command {
     // Parse the user-input
     var parsed = CommandsRepository.identifyCommand(normalizeString(input));
     // If the parsing failed..
-    if (parsed.isEmpty())
+    if (parsed.isEmpty()) {
       // return nothing
       return Optional.empty();
+    }
     
     // Extract the data
     var data = parsed.get();

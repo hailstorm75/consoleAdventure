@@ -1,12 +1,14 @@
 package elements.rooms;
 
-import elements.*;
+import elements.Item;
+import elements.ItemContainer;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
 /**
  * Class representing a room which triggers a death trap upon extracting an object
+ *
  * @author Denis Akopyan
  * @version 1.0
  */
@@ -44,15 +46,21 @@ public class TrapRoom extends Room {
   
   /**
    * Default constructor
-   * @param displayName item display name
-   * @param matchName item match string
-   * @param description item description
-   * @param firstEntryDescription message to display upon first room entry
-   * @param trapMessage message to display when the trap is triggered
-   * @param exitMessage message to display when leaving the room
+   *
+   * @param displayName    item display name
+   * @param matchName      item match string
+   * @param description    item description
+   * @param firstEntryDesc message to display upon first room entry
+   * @param trapMessage    message to display when the trap is triggered
+   * @param exitMessage    message to display when leaving the room
    */
-  public TrapRoom(@NotNull String displayName, @NotNull String matchName, @NotNull String description, @NotNull String firstEntryDescription, @NotNull String trapMessage, @NotNull String exitMessage) {
-    super(displayName, matchName, description, firstEntryDescription);
+  public TrapRoom(@NotNull String displayName,
+                  @NotNull String matchName,
+                  @NotNull String description,
+                  @NotNull String firstEntryDesc,
+                  @NotNull String trapMessage,
+                  @NotNull String exitMessage) {
+    super(displayName, matchName, description, firstEntryDesc);
     this.trapMessage = trapMessage;
     this.exitMessage = exitMessage;
   }
@@ -60,8 +68,9 @@ public class TrapRoom extends Room {
   @Override
   public Optional<Item> takeOut(@NotNull String name) {
     var item = super.takeOut(name);
-    if (item.isPresent())
+    if (item.isPresent()) {
       trapActivated = true;
+    }
     
     return item;
   }
@@ -75,9 +84,10 @@ public class TrapRoom extends Room {
   @Override
   public ItemContainer add(Item... items) {
     // If the more than one item is attempted to be added to the given room..
-    if (items.length != 1 || this.getItems().size() > 0)
+    if (items.length != 1 || this.getItems().size() > 0) {
       // throw an exception
       throw new UnsupportedOperationException("Only one item can be added to the room");
+    }
     
     // Add the item
     return super.add(items);

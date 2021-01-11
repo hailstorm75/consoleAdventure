@@ -35,7 +35,7 @@ public class TotemRoom extends Room {
    * @param displayName name of the room
    * @param matchName regex match for the room
    * @param description description of the room
-   * @param firstEntryDescription message to display when first entering the room
+   * @param firstEntryDesc message to display when first entering the room
    * @param lockId room lock id
    * @param lockedMessage message to display when attempting to open this room
    * @param totemIds ids of the required totems for the action to execute
@@ -44,12 +44,12 @@ public class TotemRoom extends Room {
   public TotemRoom(@NotNull String displayName,
                    @NotNull String matchName,
                    @NotNull String description,
-                   @NotNull String firstEntryDescription,
+                   @NotNull String firstEntryDesc,
                    int lockId,
                    @NotNull String lockedMessage,
                    List<Integer> totemIds,
                    Supplier<String> totemSuppliedAction) {
-    super(displayName, matchName, description, firstEntryDescription, lockId, lockedMessage);
+    super(displayName, matchName, description, firstEntryDesc, lockId, lockedMessage);
     this.totemIds = new HashSet<>(totemIds);
     this.totemSuppliedAction = totemSuppliedAction;
   }
@@ -78,7 +78,7 @@ public class TotemRoom extends Room {
     var totems = getItems()
         .stream()
         .filter(x -> x instanceof Totem)
-        .map(x -> ((Totem)x).getId())
+        .map(x -> ((Totem)x).getKeyId())
         .collect(Collectors.toSet());
     
     areTotemsPresent = totems.equals(totemIds);

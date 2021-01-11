@@ -134,8 +134,9 @@ public class ConsoleEngine {
   }
   
   private ConsoleEngine print(@NotNull String input, Consumer<String> predicate) {
-    if (input.length() != 0)
+    if (input.length() != 0) {
       predicate.accept(input);
+    }
     
     return instance;
   }
@@ -146,17 +147,20 @@ public class ConsoleEngine {
     for (; i < input.length(); i++) {
       System.out.print(input.charAt(i));
 
-      if (!styleCode && input.charAt(i) == '\033')
+      if (!styleCode && input.charAt(i) == '\033') {
         styleCode = true;
-      else if (styleCode && input.charAt(i) == 'm')
+      }
+      else if (styleCode && input.charAt(i) == 'm') {
         styleCode = false;
+      }
 
-      if (!styleCode)
+      if (!styleCode) {
         try {
           TimeUnit.MILLISECONDS.sleep(100);
         } catch (InterruptedException ie) {
           Thread.currentThread().interrupt();
         }
+      }
     }
     
     if (newLine)

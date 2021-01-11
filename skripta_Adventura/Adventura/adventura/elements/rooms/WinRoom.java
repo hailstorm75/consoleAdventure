@@ -26,9 +26,10 @@ public class WinRoom extends Room {
   public WinRoom(@NotNull String displayName, @NotNull String matchName, @NotNull List<Integer> locks, @NotNull String lockedMessage) {
     super(displayName, matchName, "", "", 0, lockedMessage);
     // If there are no locks..
-    if (locks.size() == 0)
+    if (locks.isEmpty()) {
       // throw an exception
       throw new IllegalArgumentException("Argument locks cannot be empty");
+    }
   
     this.locks = new HashSet<>(locks);
   }
@@ -54,13 +55,14 @@ public class WinRoom extends Room {
   public boolean unlock(@NotNull List<Key> keys) {
     var result = keys
         .stream()
-        .filter(x -> locks.contains(x.getId()))
+        .filter(x -> locks.contains(x.getKeyId()))
         .collect(Collectors.toList());
     
     isLocked = !(result.size() == locks.size());
     
-    if (!isLocked)
+    if (!isLocked) {
       keys.removeAll(result);
+    }
     
     return !isLocked;
   }

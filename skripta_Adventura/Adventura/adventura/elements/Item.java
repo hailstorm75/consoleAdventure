@@ -64,13 +64,15 @@ public class Item {
    */
   public Item(@NotNull String displayName, @NotNull String matchName, boolean canCarry, @NotNull String description) {
     // If the display name is empty..
-    if (displayName.length() == 0)
+    if (displayName.length() == 0) {
       // throw an exception
       throw new IllegalArgumentException("displayName cannot be empty");
+    }
     // If the match expression is empty..
-    if (matchName.length() == 0)
+    if (matchName.length() == 0) {
       // throw an exception
       throw new IllegalArgumentException("matchName cannot be empty");
+    }
     
     this.displayName = displayName;
     this.canCarry = canCarry;
@@ -89,12 +91,15 @@ public class Item {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o)
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
-    if (o == null || getClass() != o.getClass())
+    }
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
-    var item = (Item) o;
+    }
+    
+    var item = (Item) obj;
     return canCarry == item.canCarry
         && displayName.equals(item.displayName)
         && matcher.pattern().equals(item.matcher.pattern());

@@ -36,7 +36,7 @@ public class BattleRoom extends Room {
    * @param displayName room name
    * @param matchName room match name
    * @param description room description
-   * @param firstEntryDescription first entry message
+   * @param firstEntryDesc first entry message
    * @param firstEntryAction first action to perform upon room entry
    * @param battle room battle logic wrapper
    * @param lockId lock key id
@@ -45,20 +45,21 @@ public class BattleRoom extends Room {
   public BattleRoom(@NotNull String displayName,
                     @NotNull String matchName,
                     @NotNull String description,
-                    @NotNull String firstEntryDescription,
+                    @NotNull String firstEntryDesc,
                     Runnable firstEntryAction,
                     GameBattle battle,
                     int lockId,
                     @NotNull String lockedMessage) {
-    super(displayName, matchName, description, firstEntryDescription, lockId, lockedMessage);
+    super(displayName, matchName, description, firstEntryDesc, lockId, lockedMessage);
   
     this.firstEntryAction = firstEntryAction;
     this.battle = battle;
   }
   
   private void firstEntry() {
-    if (firstEntryAction != null)
+    if (firstEntryAction != null) {
       firstEntryAction.run();
+    }
   }
   
   /**
@@ -68,8 +69,9 @@ public class BattleRoom extends Room {
    */
   @Override
   public String getDescription() {
-    if (!isDiscovered())
+    if (!isDiscovered()) {
       firstEntry();
+    }
     
     return super.getDescription();
   }

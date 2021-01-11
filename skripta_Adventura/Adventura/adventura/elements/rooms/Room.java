@@ -16,11 +16,11 @@ import java.util.stream.Collectors;
  */
 public class Room extends ItemContainer {
   private final Set<Room> rooms;
-  private final String firstEntryDescription;
+  private final String firstEntryDesc;
   private boolean discovered;
   
-  protected String getFirstEntryDescription() {
-    return firstEntryDescription;
+  protected String getFirstEntryDesc() {
+    return firstEntryDesc;
   }
   
   protected boolean isDiscovered() { return discovered; }
@@ -31,18 +31,18 @@ public class Room extends ItemContainer {
    * @param displayName name of the given room
    * @param description room description
    */
-  public Room(@NotNull String displayName, @NotNull String matchName, @NotNull String description, @NotNull String firstEntryDescription) {
-    this(displayName, matchName, description, firstEntryDescription, -1, "");
+  public Room(@NotNull String displayName, @NotNull String matchName, @NotNull String description, @NotNull String firstEntryDesc) {
+    this(displayName, matchName, description, firstEntryDesc, -1, "");
   }
   
-  public Room(@NotNull String displayName, @NotNull String description, @NotNull String firstEntryDescription) {
-    this(displayName, displayName.toLowerCase(), description, firstEntryDescription, -1, "");
+  public Room(@NotNull String displayName, @NotNull String description, @NotNull String firstEntryDesc) {
+    this(displayName, displayName.toLowerCase(), description, firstEntryDesc, -1, "");
   }
   
-  public Room(@NotNull String displayName, @NotNull String matchName, @NotNull String description, @NotNull String firstEntryDescription, int lockId, @NotNull String lockedMessage) {
+  public Room(@NotNull String displayName, @NotNull String matchName, @NotNull String description, @NotNull String firstEntryDesc, int lockId, @NotNull String lockedMessage) {
     super(displayName, matchName, description, lockId, lockedMessage);
     this.rooms = new HashSet<>();
-    this.firstEntryDescription = firstEntryDescription;
+    this.firstEntryDesc = firstEntryDesc;
   }
   
   /**
@@ -56,9 +56,10 @@ public class Room extends ItemContainer {
       // Add it to the connections
       this.rooms.add(room);
       // If the room is not connected back..
-      if (!room.rooms.contains(this))
+      if (!room.rooms.contains(this)) {
         // complete the connection
         room.connect(this);
+      }
     }
   }
   
@@ -68,17 +69,22 @@ public class Room extends ItemContainer {
   }
   
   @Override
-  public boolean equals(@NotNull final Object input) {
+  public boolean equals(@NotNull final Object obj) {
     // If the compared object is a room..
-    if (input instanceof Room) {
+    if (obj instanceof Room) {
       // Cast it
-      var room = (Room) input;
+      var room = (Room) obj;
       // Compare the rooms by names
       return getDisplayName().equals(room.getDisplayName());
     }
 
     // The input is not equal
     return false;
+  }
+  
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), rooms, firstEntryDesc);
   }
   
   /**
@@ -95,7 +101,7 @@ public class Room extends ItemContainer {
     + ConsoleEngine
         .getInstance()
         .formatForegroundStyleCode(TextStyle.Normal)
-    + (discovered || firstEntryDescription.equals("") ? "" : "\n" + firstEntryDescription);
+    + (discovered || firstEntryDesc.equals("") ? "" : "\n" + firstEntryDesc);
   }
   
   /**
@@ -104,9 +110,9 @@ public class Room extends ItemContainer {
    * @return concatenated list of room names
    */
   public String getRoomNames() {
-    return rooms.size() != 0
-      ? "From here you can go to: " + rooms.stream().map(room -> room.getDisplayName().toLowerCase()).sorted().collect(Collectors.joining(", "))
-      : "";
+    return rooms.isEmpty()
+      ? ""
+      : "From here you can go to: " + rooms.stream().map(room -> room.getDisplayName().toLowerCase()).sorted().collect(Collectors.joining(", "));
   }
   
   /**
@@ -117,16 +123,19 @@ public class Room extends ItemContainer {
    */
   public Optional<Room> getRoom(@NotNull String name) {
     // If the name is empty..
-    if (name.length() == 0)
+    if (name.length() == 0) {
       // return nothing
       return Optional.empty();
+    }
 
     // For every connected room..
-    for (var room : rooms)
+    for (var room : rooms) {
       // If the room matches..
-      if (room.isMatch(name))
+      if (room.isMatch(name)) {
         // return it
         return Optional.of(room);
+      }
+    }
 
     // return nothing
     return Optional.empty();

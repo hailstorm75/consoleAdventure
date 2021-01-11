@@ -286,15 +286,6 @@ public final class Game {
   }
   
   /**
-   * Gets the game epilogue
-   */
-  public String getEpilogue() {
-    return currentRoom == winRoom
-        ? "Congratulations"
-        : "Thank you for playing.";
-  }
-  
-  /**
    * Checks whether the game is over
    *
    * @return true if the game is over
@@ -333,7 +324,7 @@ public final class Game {
    */
   private String processCommand(@NotNull final Optional<Command> command) {
     // If the command is invalid..
-    if (command.isEmpty())
+    if (command.isEmpty()) {
       // notify the user using a random message
       return switch ((int) ((Math.random() * (5 - 1)) + 1)) {
         case 1 -> "Come again?";
@@ -342,6 +333,8 @@ public final class Game {
         case 4 -> "Not sure what you mean by that.";
         default -> "Huh?";
       };
+    }
+
     
     // Extract the command
     var extracted = command.get();

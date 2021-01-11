@@ -1,6 +1,7 @@
 package elements.rooms;
 
-import console.*;
+import console.ConsoleEngine;
+import console.TextStyle;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashSet;
@@ -23,17 +24,17 @@ public class AutoLockRoom extends Room {
    * @param displayName room name
    * @param matchName room match name
    * @param description room description
-   * @param firstEntryDescription first entry message
+   * @param firstEntryDesc first entry message
    * @param lockedMessage locked message
    * @param unlockCondition condition for unlocking the exits
    */
   public AutoLockRoom(@NotNull String displayName,
                       @NotNull String matchName,
                       @NotNull String description,
-                      @NotNull String firstEntryDescription,
+                      @NotNull String firstEntryDesc,
                       @NotNull String lockedMessage,
                       Supplier<Boolean> unlockCondition) {
-    super(displayName, matchName, description, firstEntryDescription, -1, lockedMessage);
+    super(displayName, matchName, description, firstEntryDesc, -1, lockedMessage);
     this.unlockCondition = unlockCondition;
   }
   
@@ -64,7 +65,7 @@ public class AutoLockRoom extends Room {
   @Override
   public String getDescription() {
     return
-        (isDiscovered() ? "" : getFirstEntryDescription() + '\n')
+        (isDiscovered() ? "" : getFirstEntryDesc() + '\n')
         + ConsoleEngine
             .getInstance()
             .formatForegroundStyleCode(TextStyle.Underline)

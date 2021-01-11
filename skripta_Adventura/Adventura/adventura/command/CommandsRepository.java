@@ -64,9 +64,10 @@ public final class CommandsRepository {
       // Try to match it with the user input
       var match = command.getKey().matcher(input);
       // If there is no match..
-      if (!match.matches())
+      if (!match.matches()) {
         // move to the next command
         continue;
+      }
       
       // Parse the user-input
       return Optional.of(new Tuple3<>(command.getValue(), findInputGroup(match, "INPUT"), findInputGroup(match, "INPUT2")));
