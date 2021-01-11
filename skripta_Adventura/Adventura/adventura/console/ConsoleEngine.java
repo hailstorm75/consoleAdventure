@@ -4,11 +4,12 @@ import common.Tuple2;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.LineNumberReader;
 import java.util.Optional;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
 /**
@@ -133,47 +134,35 @@ public class ConsoleEngine {
   }
   
   private ConsoleEngine print(@NotNull String input, Consumer<String> predicate) {
-    if (input.length() == 0)
-      return instance;
-    predicate.accept(input);
+    if (input.length() != 0)
+      predicate.accept(input);
     
     return instance;
   }
   
   private ConsoleEngine typeOut(@NotNull String input, boolean newLine) {
-//    var i = 0;
-//    var styleCode = false;
-//    for (; i < input.length(); i++) {
-//      System.out.print(input.charAt(i));
-//
-//      if (!styleCode && input.charAt(i) == '\033')
-//        styleCode = true;
-//      else if (styleCode && input.charAt(i) == 'm')
-//        styleCode = false;
-//
-//      if (!styleCode)
-//        try {
-//          TimeUnit.MILLISECONDS.sleep(100);
-//        } catch (InterruptedException ie) {
-//          Thread.currentThread().interrupt();
-//        }
-//    }
-    System.out.print(input);
+    var i = 0;
+    var styleCode = false;
+    for (; i < input.length(); i++) {
+      System.out.print(input.charAt(i));
+
+      if (!styleCode && input.charAt(i) == '\033')
+        styleCode = true;
+      else if (styleCode && input.charAt(i) == 'm')
+        styleCode = false;
+
+      if (!styleCode)
+        try {
+          TimeUnit.MILLISECONDS.sleep(100);
+        } catch (InterruptedException ie) {
+          Thread.currentThread().interrupt();
+        }
+    }
     
     if (newLine)
       System.out.println();
   
     return instance;
-  }
-  
-  /**
-   * Types out the given input letter by letter with a delay in between to the console
-   *
-   * @param input text to type out
-   * @return instance of the helper class for method chaining
-   */
-  public ConsoleEngine typeOut(@NotNull String input) {
-    return typeOut(input, false);
   }
   
   /**

@@ -47,7 +47,7 @@ public class TrapRoom extends Room {
    * @param displayName item display name
    * @param matchName item match string
    * @param description item description
-   * @param firstEntryDescription
+   * @param firstEntryDescription message to display upon first room entry
    * @param trapMessage message to display when the trap is triggered
    * @param exitMessage message to display when leaving the room
    */

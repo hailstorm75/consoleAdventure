@@ -89,7 +89,8 @@ public final class GameEngine {
           input = inputTry.get();
         else
         {
-          // TODO: Game over
+          ConsoleEngine.getInstance().println("You've been killed by a trap");
+          return;
         }
       }
       // Otherwise..
@@ -109,11 +110,15 @@ public final class GameEngine {
       
       var battle = getGameInstance().getBattle();
       if (battle.isPresent())
-        runBattle(battle.get());
+        if (runBattle(battle.get()))
+        {
+          ConsoleEngine.getInstance().println("You've been killed in battle");
+          return;
+        }
     }
   }
   
-  private void runBattle(GameBattle battle) throws InterruptedException {
+  private boolean runBattle(GameBattle battle) throws InterruptedException {
     while (!battle.isDefeated()) {
       // Draw the game HUD
       drawHud();
@@ -127,16 +132,18 @@ public final class GameEngine {
       if (attack.isEmpty()) {
         if (game.removeLives())
           continue;
-        break;
+        return false;
       }
 
       var answer = TryParse(attack.get());
       if ((answer.isEmpty() || !battle.defend(answer.get()))) {
         if (game.removeLives())
           continue;
-        break;
+        return false;
       }
     }
+  
+    return true;
   }
   
   private static Optional<Integer> TryParse(@NotNull String value) {

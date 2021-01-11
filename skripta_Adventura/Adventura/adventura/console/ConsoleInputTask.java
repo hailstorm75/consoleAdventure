@@ -19,6 +19,7 @@ public class ConsoleInputTask implements Callable<String> {
         // While there is no data to read..
         while (!br.ready())
           // Wait
+          //noinspection BusyWait
           Thread.sleep(200);
         
         // Read the user-input

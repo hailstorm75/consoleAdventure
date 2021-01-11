@@ -1,5 +1,6 @@
 import command.Command;
 import common.Tuple2;
+import elements.Item;
 import elements.ItemContainer;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -79,17 +80,19 @@ class GameEngineTest {
     
     assertEquals("Square room", game.getCurrentRoom().getDisplayName());
     assertEquals(0, game.getPocket().getItems().size());
-    
-    game
+  
+    for (Item item : game
         .getCurrentRoom()
-        .getItems()
-        .stream()
-        .filter(item -> item instanceof ItemContainer)
-        .map(item -> (ItemContainer) item)
-        .filter(itemContainer -> itemContainer.getItems().size() != 0)
-        .map(itemContainer -> new Tuple2<>(itemContainer.getDisplayName(), itemContainer.getItems().stream().findFirst().get().getDisplayName()))
-        .forEach(item -> game.processStep(Command.initialize("take " + item.getItem2() + " from " + item.getItem1())));
-    
+        .getItems()) {
+      if (item instanceof ItemContainer) {
+        ItemContainer itemContainer = (ItemContainer) item;
+        if (itemContainer.getItems().size() != 0) {
+          Tuple2<String, String> stringStringTuple2 = new Tuple2<>(itemContainer.getDisplayName(), itemContainer.getItems().stream().findFirst().get().getDisplayName());
+          game.processStep(Command.initialize("take " + stringStringTuple2.getItem2() + " from " + stringStringTuple2.getItem1()));
+        }
+      }
+    }
+  
     assertEquals(2, game.getPocket().getItems().size());
     assertEquals(3, game.getLives());
     game.processStep(Command.initialize("eat chocolate"));

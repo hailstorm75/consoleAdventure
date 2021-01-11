@@ -12,9 +12,9 @@ public class Consumable extends Item {
   /**
    * Default constructor
    *
-   * @param displayName
-   * @param matchName
-   * @param description
+   * @param displayName consumable display name
+   * @param matchName consumable match string
+   * @param description consumable description
    */
   public Consumable(@NotNull String displayName, @NotNull String matchName, @NotNull String description) {
     super(displayName, matchName, true, description);

@@ -361,15 +361,6 @@ public final class Game {
   }
   
   /**
-   * Gets the description of the current room
-   *
-   * @return current room description
-   */
-  public String getRoomDescription() {
-    return currentRoom.getDescription();
-  }
-  
-  /**
    * Gets the names of the connected rooms
    *
    * @return names of the connected rooms
@@ -395,11 +386,12 @@ public final class Game {
    *
    * @return processing result
    */
+  @SuppressWarnings("SameReturnValue")
   private String end() {
     // Set the game state
     gameOver = true;
     // Notify the user
-    return "game stopped";
+    return "Game stopped";
   }
   
   /**
@@ -685,9 +677,7 @@ public final class Game {
           var keysCopy = new ArrayList<>(keys);
           // If the room was unlocked..
           if (winRoom.unlock(keys)) {
-            keysCopy.stream().filter(key -> !keys.contains(key)).forEach(key -> {
-              pocket.takeOut(key.getDisplayName());
-            });
+            keysCopy.stream().filter(key -> !keys.contains(key)).forEach(key -> pocket.takeOut(key.getDisplayName()));
             
             // notify the user
             return "You've unlocked the " + name;
@@ -759,7 +749,10 @@ public final class Game {
     if (currentRoom instanceof AutoLockRoom) {
       var autoLockRoom = (AutoLockRoom) currentRoom;
       if (autoLockRoom.isExitLocked(extracted))
-        return addExists(autoLockRoom.getLockedMessage().get());
+      {
+        var message = autoLockRoom.getLockedMessage();
+        return message.map(this::addExists).orElseGet(() -> addExists("locked"));
+      }
     }
     
     // If the room is locked..

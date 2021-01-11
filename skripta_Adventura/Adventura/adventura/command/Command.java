@@ -21,8 +21,8 @@ public class Command {
    *
    * @implNote instanced of commands can be initialized only using the {@link #initialize(String)} method
    * @param type command type
-   * @param parameterA command parameter
-   * @param parameterB
+   * @param parameterA command first parameter
+   * @param parameterB command second parameter
    */
   private Command(@NotNull CommandType type, @NotNull String parameterA, @NotNull String parameterB) {
     this.type = type;
