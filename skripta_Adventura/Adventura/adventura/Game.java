@@ -271,8 +271,10 @@ public final class Game {
    */
   public boolean removeLives() {
     var isAlive = --lives != 0;
-    if (!isAlive)
+    if (!isAlive) {
       gameOver = true;
+    }
+    
     return isAlive;
   }
   
@@ -334,7 +336,6 @@ public final class Game {
         default -> "Huh?";
       };
     }
-
     
     // Extract the command
     var extracted = command.get();
@@ -395,17 +396,19 @@ public final class Game {
    */
   private String eat(@NotNull final Command command) {
     // If the command is missing the parameter..
-    if (command.hasNoFirstParameter())
+    if (command.hasNoFirstParameter()) {
       // ask the user to specify it
       return "Eat what?";
+    }
     
     // Try retrieve the item from the pocket
     var item = pocket.takeOut(command.getFirstParameter());
     
     // If no item was found
-    if (item.isEmpty())
+    if (item.isEmpty()) {
       // notify the user
       return "I don't know what that is";
+    }
     
     // If the item is consumable..
     if (item.get() instanceof Consumable) {
@@ -428,9 +431,10 @@ public final class Game {
    */
   private String carry(@NotNull final Command command) {
     // If the command is missing the parameter..
-    if (command.hasNoFirstParameter())
+    if (command.hasNoFirstParameter()) {
       // ask the user to specify it
       return "Carry what?";
+    }
     
     // If there is only one parameter..
     if (command.hasNoSecondParameter()) {
@@ -438,17 +442,19 @@ public final class Game {
       var item = currentRoom.takeOut(command.getFirstParameter());
       
       // If no item was found..
-      if (item.isEmpty())
+      if (item.isEmpty()) {
         // notify the user
         return "I don't know what that is";
+      }
       
       // Put the item in the pocket
       pocket.add(item.get());
       
       var result = "You take the " + item.get().getDisplayName() + " and put it inside your pocket";
       
-      if (currentRoom instanceof TrapRoom)
+      if (currentRoom instanceof TrapRoom) {
         result += "\n" + ((TrapRoom) currentRoom).getTrapMessage();
+      }
       
       return result;
     }
@@ -469,9 +475,10 @@ public final class Game {
         .findFirst();
     
     // If no container is found..
-    if (container.isEmpty())
+    if (container.isEmpty()) {
       // Notify the user
       return "Don't know where to take " + command.getFirstParameter() + " from";
+    }
     
     // Extract the container
     var extractedC = container.get();
@@ -479,9 +486,10 @@ public final class Game {
     var item = extractedC.takeOut(command.getFirstParameter());
     
     // If no item is found..
-    if (item.isEmpty())
+    if (item.isEmpty()) {
       // Notify the user
       return "There is no such item inside " + command.getSecondParameter();
+    }
     
     // Place it inside the pocket
     pocket.add(item.get());
@@ -498,21 +506,24 @@ public final class Game {
    */
   private String drop(@NotNull final Command command) {
     // If the command is missing the parameter..
-    if (command.hasNoFirstParameter())
+    if (command.hasNoFirstParameter()) {
       // ask the user to specify it
       return "Drop what?";
+    }
     
     // If the current room is a trap room..
-    if (currentRoom instanceof TrapRoom)
+    if (currentRoom instanceof TrapRoom) {
       // Notify the user
       return "Cannot drop anything in here";
+    }
     
     // Try retrieve the item from the pocket
     var item = pocket.takeOut(command.getFirstParameter());
     // If the item wasn't found..
-    if (item.isEmpty())
+    if (item.isEmpty()) {
       // Notify the user
       return "I don't know what that is";
+    }
     
     // Place the item in the room
     currentRoom.add(item.get());
@@ -552,9 +563,10 @@ public final class Game {
    */
   private String examine(@NotNull final Command command) {
     // If the command is missing the parameter..
-    if (command.hasNoFirstParameter())
+    if (command.hasNoFirstParameter()) {
       // ask the user to specify it
       return "But what?";
+    }
     
     // Try get the item to examine
     var item = currentRoom
@@ -568,9 +580,10 @@ public final class Game {
         .findFirst();
     
     // If no item was found..
-    if (item.isEmpty())
+    if (item.isEmpty()) {
       // notify the player
       return "That's not here";
+    }
     
     var extracted = item.get();
     
@@ -602,9 +615,10 @@ public final class Game {
    */
   private String unlock(@NotNull final Command command) {
     // If the command is missing the parameter..
-    if (command.hasNoFirstParameter())
+    if (command.hasNoFirstParameter()) {
       // ask the user to specify it
       return "Unlock what?";
+    }
     
     // Get the entity name to unlock
     var name = command.getFirstParameter();
@@ -636,20 +650,21 @@ public final class Game {
           .findFirst();
       
       // If no item was found..
-      if (item.isEmpty())
+      if (item.isEmpty()) {
         // notify the user
         return "Don't know what that is";
+      }
       
       // For every key..
-      for (var key : keys)
+      for (var key : keys) {
         // Try to unlock the container with it
         if (item.get().unlock(key)) {
           pocket.takeOut(key.getDisplayName());
-          
+    
           // notify the user
           return "You've unlocked the " + name;
         }
-      
+      }
     }
     // Otherwise..
     else {
@@ -657,10 +672,11 @@ public final class Game {
       var roomElement = room.get();
       
       // If the room is not locked..
-      if (!roomElement.isLocked())
+      if (!roomElement.isLocked()) {
         // notify the user
         return name + " is not locked";
-        // Otherwise..
+      }
+      // Otherwise..
       else {
         // If the room is the win room..
         if (roomElement instanceof WinRoom) {
@@ -676,21 +692,24 @@ public final class Game {
             return "You've unlocked the " + name;
           }
           // Otherwise
-          else
+          else {
             // notify the user
             return name + " won't open. Probably needs more keys";
+          }
         }
         // Otherwise..
-        else
+        else {
           // For every key..
-          for (var key : keys)
+          for (var key : keys) {
             // Try to unlock the room with it
             if (roomElement.unlock(key)) {
               pocket.takeOut(key.getDisplayName());
-              
+    
               // notify the user
               return "You've unlocked the " + name;
             }
+          }
+        }
       }
     }
     
@@ -716,9 +735,10 @@ public final class Game {
    */
   private String go(@NotNull final Command command) {
     // If the command is missing the parameter..
-    if (command.hasNoFirstParameter())
+    if (command.hasNoFirstParameter()) {
       // ask the user to specify it
       return addExists("Where to? Specify the room name");
+    }
     
     // Get the specified room name
     var room = command.getFirstParameter();
@@ -727,7 +747,7 @@ public final class Game {
     var nextRoom = currentRoom.getRoom(room);
     
     // If no room was found..
-    if (nextRoom.isEmpty())
+    if (nextRoom.isEmpty()) {
       // notify the user with a random message
       return switch ((int) ((Math.random() * (4 - 1)) + 1)) {
         case 1 -> "Can't see where that is";
@@ -735,24 +755,25 @@ public final class Game {
         case 3 -> "Can't go there.";
         default -> "Where's that?";
       };
+    }
     
     // Unwrap the found room
     var extracted = nextRoom.get();
     
     if (currentRoom instanceof AutoLockRoom) {
       var autoLockRoom = (AutoLockRoom) currentRoom;
-      if (autoLockRoom.isExitLocked(extracted))
-      {
+      if (autoLockRoom.isExitLocked(extracted)) {
         var message = autoLockRoom.getLockedMessage();
         return message.map(this::addExists).orElseGet(() -> addExists("locked"));
       }
     }
     
     // If the room is locked..
-    if (extracted.isLocked())
+    if (extracted.isLocked()) {
       // get the room locked message
       //noinspection OptionalGetWithoutIsPresent
       return addExists(extracted.getLockedMessage().get());
+    }
     
     // Describe the newly entered room
     var description = extracted.getDescription();
@@ -764,9 +785,10 @@ public final class Game {
       // Cast the current room
       var trapRoom = (TrapRoom) currentRoom;
       // If the trap room was activated..
-      if (trapRoom.isTrapActivated())
+      if (trapRoom.isTrapActivated()) {
         // disconnect the room after leaving it
         extracted.disconnect(trapRoom);
+      }
       
       description = trapRoom.getExitMessage() + "\n" + description;
     }

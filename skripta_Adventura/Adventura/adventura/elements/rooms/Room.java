@@ -19,27 +19,68 @@ public class Room extends ItemContainer {
   private final String firstEntryDesc;
   private boolean discovered;
   
+  /**
+   * Getter for the FirstEntryDesc property
+   *
+   * @return first entry description
+   */
   protected String getFirstEntryDesc() {
     return firstEntryDesc;
   }
   
-  protected boolean isDiscovered() { return discovered; }
+  /**
+   * Gets whether the room had been discovered
+   *
+   * @return true is the room had been discovered
+   */
+  protected boolean isDiscovered() {
+    return discovered;
+  }
   
   /**
-   * Default constructor
+   * Room constructor
    *
-   * @param displayName name of the given room
-   * @param description room description
+   * @param displayName    name of the given room
+   * @param matchName      match room name
+   * @param description    room description
+   * @param firstEntryDesc message to display upon first entry
    */
-  public Room(@NotNull String displayName, @NotNull String matchName, @NotNull String description, @NotNull String firstEntryDesc) {
+  public Room(@NotNull String displayName,
+              @NotNull String matchName,
+              @NotNull String description,
+              @NotNull String firstEntryDesc) {
     this(displayName, matchName, description, firstEntryDesc, -1, "");
   }
   
-  public Room(@NotNull String displayName, @NotNull String description, @NotNull String firstEntryDesc) {
+  /**
+   * Room constructor
+   *
+   * @param displayName    name of the given room
+   * @param description    room description
+   * @param firstEntryDesc message to display upon first entry
+   */
+  public Room(@NotNull String displayName,
+              @NotNull String description,
+              @NotNull String firstEntryDesc) {
     this(displayName, displayName.toLowerCase(), description, firstEntryDesc, -1, "");
   }
   
-  public Room(@NotNull String displayName, @NotNull String matchName, @NotNull String description, @NotNull String firstEntryDesc, int lockId, @NotNull String lockedMessage) {
+  /**
+   * Room constructor
+   *
+   * @param displayName    name of the given room
+   * @param matchName      match room name
+   * @param description    room description
+   * @param firstEntryDesc message to display upon first entry
+   * @param lockId         id of the lock
+   * @param lockedMessage  message to display when attempting to enter when in locked state
+   */
+  public Room(@NotNull String displayName,
+              @NotNull String matchName,
+              @NotNull String description,
+              @NotNull String firstEntryDesc,
+              int lockId,
+              @NotNull String lockedMessage) {
     super(displayName, matchName, description, lockId, lockedMessage);
     this.rooms = new HashSet<>();
     this.firstEntryDesc = firstEntryDesc;
@@ -63,6 +104,11 @@ public class Room extends ItemContainer {
     }
   }
   
+  /**
+   * Disconnects rooms from each other
+   *
+   * @param room room to disconnect
+   */
   public final void disconnect(@NotNull final Room room) {
     this.rooms.remove(room);
     room.rooms.remove(this);
@@ -77,7 +123,7 @@ public class Room extends ItemContainer {
       // Compare the rooms by names
       return getDisplayName().equals(room.getDisplayName());
     }
-
+    
     // The input is not equal
     return false;
   }
@@ -97,11 +143,11 @@ public class Room extends ItemContainer {
     return ConsoleEngine
         .getInstance()
         .formatForegroundStyleCode(TextStyle.Underline)
-    + super.getDescription()
-    + ConsoleEngine
+        + super.getDescription()
+        + ConsoleEngine
         .getInstance()
         .formatForegroundStyleCode(TextStyle.Normal)
-    + (discovered || firstEntryDesc.equals("") ? "" : "\n" + firstEntryDesc);
+        + (discovered || firstEntryDesc.equals("") ? "" : "\n" + firstEntryDesc);
   }
   
   /**
@@ -111,8 +157,8 @@ public class Room extends ItemContainer {
    */
   public String getRoomNames() {
     return rooms.isEmpty()
-      ? ""
-      : "From here you can go to: " + rooms.stream().map(room -> room.getDisplayName().toLowerCase()).sorted().collect(Collectors.joining(", "));
+        ? ""
+        : "From here you can go to: " + rooms.stream().map(room -> room.getDisplayName().toLowerCase()).sorted().collect(Collectors.joining(", "));
   }
   
   /**
@@ -127,7 +173,7 @@ public class Room extends ItemContainer {
       // return nothing
       return Optional.empty();
     }
-
+    
     // For every connected room..
     for (var room : rooms) {
       // If the room matches..
@@ -136,7 +182,7 @@ public class Room extends ItemContainer {
         return Optional.of(room);
       }
     }
-
+    
     // return nothing
     return Optional.empty();
   }

@@ -16,12 +16,28 @@ public class ItemContainer extends Item {
   private int lockId;
   private final String lockedMessage;
   
+  /**
+   * ItemContainer constructor
+   *
+   * @param displayName container display name
+   * @param matchName container match string
+   * @param description container description
+   * @param lockId container lock id
+   * @param lockedMessage message to display upon attempting to upon when locked
+   */
   public ItemContainer(@NotNull String displayName, @NotNull String matchName, @NotNull String description, int lockId, @NotNull String lockedMessage) {
     super(displayName, matchName, false, description);
     this.lockId = lockId;
     this.lockedMessage = lockedMessage;
   }
   
+  /**
+   * ItemContainer constructor
+   *
+   * @param displayName container display name
+   * @param matchName container match string
+   * @param description container description
+   */
   public ItemContainer(@NotNull String displayName, @NotNull String matchName, @NotNull String description) {
     this(displayName, matchName, description, -1, "");
   }

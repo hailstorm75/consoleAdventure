@@ -57,7 +57,9 @@ public class BattleRoom extends Room {
   }
   
   private void firstEntry() {
+    // If there is a first entry action..
     if (firstEntryAction != null) {
+      // Run the entry action
       firstEntryAction.run();
     }
   }
@@ -69,7 +71,9 @@ public class BattleRoom extends Room {
    */
   @Override
   public String getDescription() {
+    // If the room hadn't yet been discovered..
     if (!isDiscovered()) {
+      // Display the first entry message
       firstEntry();
     }
     

@@ -43,11 +43,19 @@ public class Item {
     return getDescriptionFinal();
   }
   
+  /**
+   * Getter for the description property
+   *
+   * @implNote description getter that cannot be overridden
+   * @return description of the item
+   */
   protected final String getDescriptionFinal() {
     return description;
   }
   
   /**
+   * Item constructor
+   *
    * @param displayName item display name
    * @param canCarry can the item be carried
    * @param description item description
@@ -57,6 +65,8 @@ public class Item {
   }
   
   /**
+   * Item constructor
+   *
    * @param displayName item display name
    * @param matchName item match string
    * @param canCarry can the item be carried

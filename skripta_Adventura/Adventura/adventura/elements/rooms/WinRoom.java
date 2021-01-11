@@ -53,17 +53,25 @@ public class WinRoom extends Room {
    * @return true if unlocked
    */
   public boolean unlock(@NotNull List<Key> keys) {
+    // Get the valid keys
     var result = keys
+        // Iterate of the keys
         .stream()
+        // Get the key ids that match the required keys of the room
         .filter(x -> locks.contains(x.getKeyId()))
+        // Materialize the keys
         .collect(Collectors.toList());
     
+    // If the number of inserted keys matches the required keys set the locked state to false
     isLocked = !(result.size() == locks.size());
     
+    // If the room is unlocked..
     if (!isLocked) {
+      // Remove the used keys
       keys.removeAll(result);
     }
     
+    // Return unlocked state
     return !isLocked;
   }
   

@@ -143,19 +143,29 @@ public class ConsoleEngine {
   
   private ConsoleEngine typeOut(@NotNull String input, boolean newLine) {
     var i = 0;
-    var styleCode = false;
+    
+    // Assume the text is not styled
+    var styledText = false;
+    // For each character in the text..
     for (; i < input.length(); i++) {
+      // Print the character
       System.out.print(input.charAt(i));
 
-      if (!styleCode && input.charAt(i) == '\033') {
-        styleCode = true;
+      // If the text isn't marked as styled and the current character is the start of styling..
+      if (!styledText && input.charAt(i) == '\033') {
+        // the text is styled
+        styledText = true;
       }
-      else if (styleCode && input.charAt(i) == 'm') {
-        styleCode = false;
+      // Otherwise if the text is styled and the current character is the end of styling
+      else if (styledText && input.charAt(i) == 'm') {
+        // the text is no longer styled
+        styledText = false;
       }
 
-      if (!styleCode) {
+      // If the text is not styled
+      if (!styledText) {
         try {
+          // Delay for the typing effect
           TimeUnit.MILLISECONDS.sleep(100);
         } catch (InterruptedException ie) {
           Thread.currentThread().interrupt();
@@ -163,9 +173,12 @@ public class ConsoleEngine {
       }
     }
     
+    // If a newline is required..
     if (newLine)
+      // print a new line
       System.out.println();
   
+    // Chain instance
     return instance;
   }
   

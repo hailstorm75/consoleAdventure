@@ -75,14 +75,21 @@ public class TotemRoom extends Room {
   public ItemContainer add(Item... items) {
     super.add(items);
     
+    // Gets the current totems in the room
     var totems = getItems()
+        // Iterate over the items
         .stream()
+        // Filter the totem items
         .filter(x -> x instanceof Totem)
+        // Get the totem ids
         .map(x -> ((Totem)x).getKeyId())
+        // Materialize the ids to a set
         .collect(Collectors.toSet());
     
+    // Determine whether all of required totems are present
     areTotemsPresent = totems.equals(totemIds);
     
+    // Chain instance
     return this;
   }
 }

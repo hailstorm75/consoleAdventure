@@ -70,12 +70,17 @@ public final class Command {
   /**
    * Getter for the FirstParameter property
    *
-   * @return the command parameter
+   * @return first parameter value
    */
   public String getFirstParameter() {
     return parameterA;
   }
   
+  /**
+   * Getter for the SecondParameter property
+   *
+   * @return second parameter value
+   */
   public String getSecondParameter() {
     return parameterB;
   }

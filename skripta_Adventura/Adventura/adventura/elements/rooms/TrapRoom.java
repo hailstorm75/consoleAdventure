@@ -65,13 +65,23 @@ public class TrapRoom extends Room {
     this.exitMessage = exitMessage;
   }
   
+  /**
+   * Removes an item from the room
+   *
+   * @param name name of the item to remove
+   * @return extracted item
+   */
   @Override
   public Optional<Item> takeOut(@NotNull String name) {
+    // Try extract the item from the room
     var item = super.takeOut(name);
+    // If the item exists..
     if (item.isPresent()) {
+      // Activate the trap
       trapActivated = true;
     }
     
+    // Return the extracted item
     return item;
   }
   

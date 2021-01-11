@@ -9,6 +9,13 @@ import org.jetbrains.annotations.NotNull;
  * @version 1.0
  */
 public class Note extends Item {
+  /**
+   * Default constructor
+   *
+   * @param displayName note display name
+   * @param matchName note match name
+   * @param description note description
+   */
   public Note(@NotNull String displayName, @NotNull String matchName, @NotNull String description) {
     super(displayName, matchName, false, description);
   }
