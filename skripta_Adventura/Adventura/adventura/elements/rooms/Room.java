@@ -130,7 +130,7 @@ public class Room extends ItemContainer {
   
   @Override
   public int hashCode() {
-    return Objects.hash(super.hashCode(), rooms, firstEntryDesc);
+    return super.hashCode();
   }
   
   /**

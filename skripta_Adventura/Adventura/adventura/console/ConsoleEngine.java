@@ -134,7 +134,9 @@ public class ConsoleEngine {
   }
   
   private ConsoleEngine print(@NotNull String input, Consumer<String> predicate) {
-    if (input.length() != 0) {
+    // If the input is not empty..
+    if (!input.isEmpty()) {
+      // Print the input
       predicate.accept(input);
     }
     

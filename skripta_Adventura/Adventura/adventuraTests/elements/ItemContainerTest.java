@@ -105,10 +105,6 @@ class ItemContainerTest {
     assertEquals(expected, result.isPresent() && result.get().equals("lock"));
   }
   
-  @Test
-  void unlock() {
-  }
-  
   private static Stream<Arguments> parametersForHasItem() {
     return Stream.of(
         Arguments.of(new String[] { "Item1", "Item2" }, "Item3", false),
@@ -131,9 +127,5 @@ class ItemContainerTest {
     
     // Assert
     assertEquals(expected, result);
-  }
-  
-  @Test
-  void takeOut() {
   }
 }

@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
  * @version 3.0
  */
 public final class Game {
+  private final static int POCKET_CAP = 6;
   private final CommandsRepository validCommands;
   private boolean gameOver;
   private Room currentRoom;
@@ -259,8 +260,12 @@ public final class Game {
    * Increases the players health
    */
   public void addLives() {
+    // If the lives have reached the cap..
     if (lives == 6)
+      // Exit
       return;
+    
+    // Increment the lives
     ++lives;
   }
   
@@ -270,11 +275,15 @@ public final class Game {
    * @return returns false is the player has died
    */
   public boolean removeLives() {
+    // Check if there are no lives left
     var isAlive = --lives != 0;
+    // If the player is no longer alive..
     if (!isAlive) {
+      // set the game state to over
       gameOver = true;
     }
     
+    // Return game state
     return isAlive;
   }
   
@@ -445,6 +454,12 @@ public final class Game {
       if (item.isEmpty()) {
         // notify the user
         return "I don't know what that is";
+      }
+      
+      // If the pocket items cap has been reached..
+      if (pocket.getItems().size() == POCKET_CAP) {
+        // Notify the user
+        return "You're pockets are full, you'll need to empty them";
       }
       
       // Put the item in the pocket
