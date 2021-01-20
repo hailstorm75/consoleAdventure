@@ -37,11 +37,12 @@ public final class CommandsRepository {
     commandsManual.put(CommandType.Help, "Displays help for the game or a command");
     commandsManual.put(CommandType.End, "Ends the game");
     commandsManual.put(CommandType.Examine, "Examines a given item");
-    commandsManual.put(CommandType.Carry, "Put the given item into the pocket. Example1: take key. Example2: take key from box");
+    commandsManual.put(CommandType.Carry, "Puts the given item into the pocket. Example1: take key. Example2: take key from box");
     commandsManual.put(CommandType.Drop, "Takes the given item from the pocket and drops it on the floor of the current room. Example: drop key");
     commandsManual.put(CommandType.Where, "Examines the current player location");
     commandsManual.put(CommandType.Goto, "The player will enter the specified room. Example: go to the kitchen");
     commandsManual.put(CommandType.Unlock, "Unlocks a given room or container");
+    commandsManual.put(CommandType.Eat, "Consumes the given item");
   }
   
   private static Optional<String> findInputGroup(@NotNull final Matcher matcher, @NotNull String name) {

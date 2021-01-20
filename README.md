@@ -1,10 +1,10 @@
 # Adventure console game
 
-> Version: 1.0
-> 
-> Author: Denis Akopyan
-
 Programming thesis project in Java.
+
+> **Version**: 1.0
+> 
+> **Author**: Denis Akopyan
 
 ## Description
 
@@ -30,6 +30,72 @@ List of features:
     - trap rooms require the user to quickly enter a command until certain death
  - boos fights
     - boos events require the user to quickly enter a command until loss of health
+
+## Instructions
+
+Type what you wish to do and press enter (more than one way to enter a command is supported).
+
+The following command types are available:
+
+### Unlock
+Unlocks a room or item container if the required key is present in the players pocket.
+
+Examples:
+ - `unlock room`
+ - `open room`
+
+### Go to
+The player will enter the specified room.
+
+Examples:
+ - `go to the kitchen`
+ - `head to kitchen`
+ - `enter the kitchen`
+ - `move to kitchen`
+
+### Where
+Examines the current player location.
+
+Examples:
+ - `where`
+ - `where am I`
+ - `location`
+ - `look around`
+
+### Drop
+Takes the given item from the pocket and drops it on the floor of the current room.
+
+Example:
+ - `drop key`
+
+### Help
+Displays help for the game, or a command.
+
+### Eat
+Consumes a given item.
+
+Examples:
+ - `consume the apple`
+ - `eat the apple`
+ - `devour apple`
+
+### End
+End the game.
+
+### Examine
+Examines a given item.
+
+Example:
+ - `examine key`
+ - `inspect key`
+ - `look at key`
+
+### Carry
+Puts the given item into the pocket.
+
+Examples:
+ - `take key`
+ - `take key from box`
 
 ## Story
 
