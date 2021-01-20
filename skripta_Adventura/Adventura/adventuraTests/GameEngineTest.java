@@ -27,7 +27,7 @@ class GameEngineTest {
   
   @Test
   void gameRun() {
-    var game = GameEngine.getGameInstance();
+    var game = new Game();
     
     assertEquals("Bedroom", game.getCurrentRoom().getDisplayName());
     game.processStep(Command.initialize("go to corridor"));
@@ -291,7 +291,7 @@ class GameEngineTest {
   
   @Test
   void gameWinnable() {
-    var game = GameEngine.getGameInstance();
+    var game = new Game();
     
     // Introduction
     assertEquals("You wake up in your room, bright light from the sun is shing inside. Today is going to be a great day!\n" +
